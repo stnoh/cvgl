@@ -1,5 +1,6 @@
 ﻿##############################################################################
-# 
+# CMake-based build system for cvgl
+# Author: Seung-Tak Noh (seungtak.noh@gmail.com)
 ##############################################################################
 cmake_minimum_required (VERSION 3.1)
 project ("cvgl")
@@ -68,8 +69,8 @@ macro(copy_3rdparty_dlls APP)
 	)
 endmacro()
 
-########################################
-# Sub-directories
-########################################
 
-## [TODO] add new project as subdirectory
+##############################################################################
+# Sub-directories: [TODO] add new project as subdirectory
+##############################################################################
+add_subdirectory(examples/example101)
