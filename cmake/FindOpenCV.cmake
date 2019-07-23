@@ -40,13 +40,19 @@ if(OPENCV_FOUND)
 
   if (NOT TARGET OpenCV::Core)
     add_library(OpenCV::Core MODULE IMPORTED)
-	set_target_properties(OpenCV::Core PROPERTIES IMPORTED_LOCATION "${OPENCV_LIBRARY_DIR}/opencv_core2413.lib")
+	set_target_properties(OpenCV::Core PROPERTIES
+	  INTERFACE_INCLUDE_DIRECTORIES "${OPENCV_INCLUDE_DIR}"
+	  IMPORTED_LOCATION "${OPENCV_LIBRARY_DIR}/opencv_core2413.lib")
 
     add_library(OpenCV::HighGUI MODULE IMPORTED)
-	set_target_properties(OpenCV::HighGUI PROPERTIES IMPORTED_LOCATION "${OPENCV_LIBRARY_DIR}/opencv_highgui2413.lib")
+	set_target_properties(OpenCV::HighGUI PROPERTIES
+	  INTERFACE_INCLUDE_DIRECTORIES "${OPENCV_INCLUDE_DIR}"
+	  IMPORTED_LOCATION "${OPENCV_LIBRARY_DIR}/opencv_highgui2413.lib")
 
     add_library(OpenCV::ImgProc MODULE IMPORTED)
-	set_target_properties(OpenCV::ImgProc PROPERTIES IMPORTED_LOCATION "${OPENCV_LIBRARY_DIR}/opencv_imgproc2413.lib")
+	set_target_properties(OpenCV::ImgProc PROPERTIES
+	  INTERFACE_INCLUDE_DIRECTORIES "${OPENCV_INCLUDE_DIR}"
+	  IMPORTED_LOCATION "${OPENCV_LIBRARY_DIR}/opencv_imgproc2413.lib")
   endif()
 
 endif()
