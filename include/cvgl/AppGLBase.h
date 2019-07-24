@@ -1,5 +1,5 @@
 /******************************************************************************
-Application base class with GL context using GLFW
+Application base class with GL context using GLFW with AntTweakBar
 Author: Seung-Tak Noh (seungtak.noh [at] gmail.com)
 ******************************************************************************/
 #ifndef APP_GL_BASE
@@ -8,8 +8,7 @@ Author: Seung-Tak Noh (seungtak.noh [at] gmail.com)
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include <cstdlib>
-#include <cstdio>
+#include <AntTweakBar.h>
 
 class AppGLBase
 {
@@ -38,6 +37,7 @@ public:
 
 protected:
 	GLFWwindow *window;
+	TwBar *bar;
 
 	bool internalProcess;
 

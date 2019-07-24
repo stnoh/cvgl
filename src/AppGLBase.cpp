@@ -1,5 +1,5 @@
 /******************************************************************************
-Application base class with GL context using GLFW & AntTweakBar
+Application base class with GL context using GLFW with AntTweakBar
 Author: Seung-Tak Noh (seungtak.noh [at] gmail.com)
 ******************************************************************************/
 #include "cvgl/AppGLBase.h"
@@ -20,6 +20,7 @@ void windowRefreshFun(GLFWwindow* window)
 	appGL->Draw(appGL->width, appGL->height);
 
 	// routine
+	TwDraw(); // draw AntTweakBar before swapbuffer
 	glfwSwapBuffers(window);
 	appGL->is_dirty = false;
 }
@@ -71,6 +72,13 @@ AppGLBase::AppGLBase(const int width, const int height)
 		exit(1);
 	}
 
+	// attach default AntTweakBar
+	TwInit(TW_OPENGL, nullptr);
+	TwWindowSize(width, height);
+	bar = TwNewBar("Bar");
+	TwDefine("GLOBAL fontsize=3"); // large fontsize
+	TwDefine("Bar position='5 5' size='250 450' label='Functions' refresh=0.5 alpha=0 ");
+
 	// set GLFW-only callbacks
 	glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int w, int h)
 	{
@@ -85,6 +93,7 @@ AppGLBase::AppGLBase(const int width, const int height)
 	glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height)
 	{
 		AppGLBase* appGL = (AppGLBase*)glfwGetWindowUserPointer(window);
+		TwWindowSize(width, height);
 		appGL->is_dirty = true;
 	});
 	glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods)
@@ -95,6 +104,7 @@ AppGLBase::AppGLBase(const int width, const int height)
 		if (0 == action) appGL->mouse_button[button] = 0;
 		else appGL->mouse_button[button] = action + mods;
 
+		TwEventMouseButtonGLFW3(window, button, action, mods);
 		appGL->is_dirty = true;
 	});
 	glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xpos, double ypos)
@@ -107,6 +117,7 @@ AppGLBase::AppGLBase(const int width, const int height)
 		appGL->mouse_this_x = (int)xpos;
 		appGL->mouse_this_y = (int)ypos;
 
+		TwEventMousePosGLFW3(window, xpos, ypos);
 		appGL->is_dirty = true;
 	});
 	glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset)
@@ -114,22 +125,28 @@ AppGLBase::AppGLBase(const int width, const int height)
 		AppGLBase* appGL = (AppGLBase*)glfwGetWindowUserPointer(window);
 		static int scroll = 0;
 		scroll += (int)yoffset;
+		TwEventMouseWheelGLFW3(window, xoffset, yoffset + scroll); // ********* [CHECK ME LATER]
 		appGL->is_dirty = true;
 	});
 	glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
 		AppGLBase* appGL = (AppGLBase*)glfwGetWindowUserPointer(window);
 		appGL->GetKey(key, action);
+		TwEventKeyGLFW3(window, key, scancode, action, mods);
 		appGL->is_dirty = true;
 	});
 	glfwSetCharCallback(window, [](GLFWwindow* window, unsigned int codepoint)
 	{
 		AppGLBase* appGL = (AppGLBase*)glfwGetWindowUserPointer(window);
+		TwEventCharGLFW3(window, codepoint);
 		appGL->is_dirty = true;
 	});
 }
 AppGLBase::~AppGLBase()
 {
+	if (bar) TwDeleteBar(bar);
+	TwTerminate();
+
 	if(window) glfwWindowShouldClose(window);
 	glfwTerminate();
 }
