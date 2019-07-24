@@ -5,11 +5,6 @@ Author: Seung-Tak Noh (seungtak.noh [at] gmail.com)
 #include "cvgl/ConvertCVGL.h"
 #include <iostream>
 
-#include <opencv2/imgproc/imgproc.hpp>
-
-
-#include <glm/ext.hpp>
-
 namespace cvgl {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -58,6 +53,7 @@ cv::Mat GetRenderedDepthImage32F(int w, int h)
 
 ///////////////////////////////////////////////////////////////////////////////
 // convert depth image (cv::Mat) to point cloud (in GL coordinate)
+// similar to glm::unProject, but it provides more efficient routine
 ///////////////////////////////////////////////////////////////////////////////
 inline glm::vec3 convertDepth2Point(glm::mat4 proj_inv, glm::vec3 pt_img, float width, float height)
 {
@@ -73,7 +69,7 @@ inline glm::vec3 convertDepth2Point(glm::mat4 proj_inv, glm::vec3 pt_img, float 
 	return pt3d / pt3d.w;
 }
 
-std::vector<glm::vec3> ConvertDepthImage2PointCloud(glm::mat4 proj, cv::Mat depthImage, bool full)
+std::vector<glm::vec3> ConvertDepthImage2PointCloud(glm::mat4 proj_inv, cv::Mat depthImage, bool full)
 {
 	// check 32-bit, 1-channel floating point...
 	if (depthImage.type() != CV_32FC1) {
@@ -88,7 +84,6 @@ std::vector<glm::vec3> ConvertDepthImage2PointCloud(glm::mat4 proj, cv::Mat dept
 
 	// convert buffer value to camera space Z
 	float* depth = (float*)depthImage.data;
-	glm::mat4 proj_inv = glm::inverse(proj);
 
 	if (full) {
 		// same with image size

@@ -10,7 +10,7 @@ Author: Seung-Tak Noh (seungtak.noh [at] gmail.com)
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
-#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 namespace cvgl {
 
@@ -20,8 +20,8 @@ cv::Mat GetRenderedColorImage32F(int w, int h);
 cv::Mat GetRenderedDepthImage32F(int w, int h);
 
 // convert depth image (cv::Mat) to point cloud (in GL coordinate)
-//glm::vec3 convertDepth2Point(glm::mat4 proj_inv, glm::vec3 pt_img, float width, float height); // no need to expose
-std::vector<glm::vec3> ConvertDepthImage2PointCloud(glm::mat4 proj, cv::Mat depthImage, bool full = false);
+//inline glm::vec3 convertDepth2Point(glm::mat4 proj_inv, glm::vec3 pt_img, float width, float height); // no need to expose
+std::vector<glm::vec3> ConvertDepthImage2PointCloud(glm::mat4 proj_inv, cv::Mat depthImage, bool full = false);
 
 }
 

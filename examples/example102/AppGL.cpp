@@ -214,7 +214,7 @@ void AppGL::CreatePointCloud()
 #endif
 
 	// convert depth image to point cloud
-	cloud = cvgl::ConvertDepthImage2PointCloud(proj, depth);
+	cloud = cvgl::ConvertDepthImage2PointCloud(glm::inverse(proj), depth);
 
 	return;
 }
