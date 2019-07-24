@@ -79,3 +79,4 @@ endmacro()
 # Sub-directories: [TODO] add new project as subdirectory
 ##############################################################################
 add_subdirectory(examples/example101)
+add_subdirectory(examples/example102)
