@@ -25,17 +25,16 @@ private:
 	// member objects & variables
 	glm::fvec4 BgColor[2] = { glm::fvec4(0.5, 0.5, 0.5, 1.0), glm::fvec4(0.2, 0.3, 0.5, 1.0) };
 
-	float GlobalViewFoV;
 	glm::quat GlobalViewRotation;
 	glm::vec3 GlobalViewPosition;
 	void resetGlobalView() {
-		GlobalViewFoV = 30.0f;
-		GlobalViewPosition = glm::vec3(0.0f, 5.0f, 40.0f);
+		GlobalViewPosition = glm::vec3(0.0f, 3.0f, 30.0f);
 		GlobalViewRotation = glm::quat(glm::radians(glm::vec3(45.0f, -37.5f, -30.0f)));
 	}
 
 	cvgl::GLCamera *rendercam = nullptr;
 	void resetCameraView() {
+		// oblique view as default
 		rendercam->position = glm::vec3(0.0f, 10.0f, 10.0f);
 		rendercam->rotation = glm::quat(glm::radians(glm::vec3(-45.0f, 0.0f, 0.0f)));
 	}

@@ -15,7 +15,7 @@ void AppGL::Draw(const int width, const int height)
 	// viewport settings ( 0:left / 1:right )
 	cv::Rect viewport[2] = {
 		cv::Rect(0, 0, w, height),
-		cv::Rect(w, height-w, w, w) // same aspect
+		cv::Rect(w, height-w, w, w) // keep the same aspect (1:1)
 	};
 
 	glEnable(GL_SCISSOR_TEST); // to cut left/right viewport
@@ -29,10 +29,10 @@ void AppGL::Draw(const int width, const int height)
 
 		glm::mat4 proj = rendercam->GetProjMatrix();
 		glm::mat4 view = rendercam->GetViewMatrix();
-		
+
 		// for global viewer (id:0)
 		if (0 == id) {
-			proj = glm::infinitePerspective(glm::radians(GlobalViewFoV), (float)viewport[id].width / (float)viewport[id].height, 0.1f);
+			proj = glm::infinitePerspective(glm::radians(53.1301f), (float)viewport[id].width / (float)viewport[id].height, 0.1f);
 			view = glm::translate(glm::mat4(1.0f), -GlobalViewPosition);
 			view = view * glm::toMat4(GlobalViewRotation);
 		}
@@ -86,9 +86,10 @@ void AppGL::drawView3D(glm::mat4 proj, glm::mat4 view)
 ///////////////////////////////////////////////////////////////////////////////
 bool AppGL::Init()
 {
-	// instantiate camera
+	// instantiate camera object
 	rendercam = new cvgl::GLCamera();
-	rendercam->SetCameraMatrixCV({ 1.0f, 1.0f, 0.5f, 0.5f }, 0.1f, 100.0f);
+	rendercam->SetCameraMatrixCV({ 1.0f, 1.0f, 0.5f, 0.5f }, 1.0f, 30.0f);
+	rendercam->is_inf = true;
 
 	resetGlobalView();
 	resetCameraView();
@@ -123,13 +124,29 @@ bool AppGL::Init()
 	TwAddVarRW(bar, "Camera-infinity", TwType::TW_TYPE_BOOLCPP, &rendercam->is_inf  , "group='Camera' label='infinity'");
 	TwAddVarRW(bar, "Camera-z_near"  , TwType::TW_TYPE_FLOAT  , &rendercam->z_near  , "group='Camera' label='z_near' step=0.01");
 	TwAddVarRW(bar, "Camera-z_far"   , TwType::TW_TYPE_FLOAT  , &rendercam->z_far   , "group='Camera' label='z_far'  step=0.01");
+
+	TwAddVarCB(bar, "Camera-FoV", TwType::TW_TYPE_FLOAT, 
+		[](const void* value, void* obj) {
+			cvgl::GLCamera* rendercam = (cvgl::GLCamera*)obj;
+			rendercam->SetCameraFoV(*(float*)value, 1.0f, 1.0f, rendercam->z_near);
+		},
+		[](void* value, void* obj) {
+			cvgl::GLCamera* rendercam = (cvgl::GLCamera*)obj;
+			*(float*)value = rendercam->GetCameraFoV();
+		},
+		rendercam, "group='Camera' label='FoV' min=1.0 max=179.0");
+
+	TwAddVarRW(bar, "Camera-L", TwType::TW_TYPE_FLOAT, &rendercam->L, "group='Camera' label='Left'   step=0.01");
+	TwAddVarRW(bar, "Camera-R", TwType::TW_TYPE_FLOAT, &rendercam->R, "group='Camera' label='Right'  step=0.01");
+	TwAddVarRW(bar, "Camera-B", TwType::TW_TYPE_FLOAT, &rendercam->B, "group='Camera' label='Bottom' step=0.01");
+	TwAddVarRW(bar, "Camera-T", TwType::TW_TYPE_FLOAT, &rendercam->T, "group='Camera' label='Top'    step=0.01");
 #endif
 
 	return true;
 }
 void AppGL::End()
 {
-	delete rendercam;
+	if (rendercam) delete rendercam;
 }
 
 
@@ -140,7 +157,7 @@ int main(int argc, char** argv)
 {
 	AppGL app(1280, 640);
 
-	app.SetInternalProcess(true);
+	app.SetInternalProcess(false); // update when it is dirty
 	app.run();
 
 	app.End();
