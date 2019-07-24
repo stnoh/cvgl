@@ -24,6 +24,10 @@ find_package(GLEW REQUIRED)
 set(GLFW_ROOT ${CMAKE_SOURCE_DIR}/3rdParty/GLFW)
 find_package(GLFW REQUIRED)
 
+## AntTweakBar
+set(ANTTWEAKBAR_ROOT ${CMAKE_SOURCE_DIR}/3rdParty/AntTweakBar)
+find_package(ANTTWEAKBAR REQUIRED)
+
 ## OpenCV
 set(OPENCV_ROOT ${CMAKE_SOURCE_DIR}/3rdParty/OpenCV)
 find_package(OPENCV REQUIRED)
@@ -52,7 +56,7 @@ target_include_directories(cvgl PUBLIC
 ########################################
 ## link *.lib
 target_link_libraries(cvgl
-	OpenGL::GLU GLEW::GLEW GLFW::GLFW 
+	OpenGL::GLU GLEW::GLEW GLFW::GLFW AntTweakBar::Lib
 	OpenCV::Core OpenCV::HighGUI OpenCV::ImgProc
 )
 
@@ -61,6 +65,7 @@ macro(copy_3rdparty_dlls APP)
     add_custom_command(TARGET ${APP} POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${GLEW_ROOT}/bin64/glew32.dll	${CMAKE_CURRENT_BINARY_DIR}	## GLEW
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${GLFW_ROOT}/bin64/glfw3.dll	${CMAKE_CURRENT_BINARY_DIR}	## GLFW
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ANTTWEAKBAR_ROOT}/bin64/anttweakbar64.dll	${CMAKE_CURRENT_BINARY_DIR}	## AntTweakBar
 
 		## OpenCV (minimum)
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENCV_ROOT}/bin64/opencv_core2413.dll   	${CMAKE_CURRENT_BINARY_DIR}
