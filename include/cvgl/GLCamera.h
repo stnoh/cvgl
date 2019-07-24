@@ -21,10 +21,42 @@ public:
 	// intrinsic (FOV): projection matrix
 	////////////////////////////////////////////////////////////
 	const glm::mat4 GetProjMatrix();
+	
+	// get approximated angle FoV
+	const float GetCameraFoV(bool isVertical=true)
+	{
+		if (is_ortho) return FLT_MAX;
+
+		glm::mat4 proj = GetProjMatrix();
+
+		// vertical FoV (FoVy) as default, horizontal FoV (FoVx) if needed
+		float value = (isVertical) ? proj[1][1] : proj[0][0];
+
+		float AFoV = 2.0f * glm::degrees( atan2(1.0f, value) );
+		return AFoV;
+	}
 
 	// set projection matrix by normalized camera matrix [0.0:1.0]
 	void SetCameraMatrixCV(std::vector<float> camParams4x1, float z_near);
 	void SetCameraMatrixCV(std::vector<float> camParams4x1, float z_near, float z_far);
+
+	void SetCameraFoV(float FoVy_deg, float width, float height, float z_near, float z_far)
+	{
+		float FoVy = glm::radians(FoVy_deg);
+		glm::mat4 proj = glm::perspectiveFov(FoVy, width, height, z_near, z_far);
+		L = (proj[2][0] - 1.0f) / proj[0][0];
+		R = (proj[2][0] + 1.0f) / proj[0][0];
+		T = (proj[2][1] + 1.0f) / proj[1][1];
+		B = (proj[2][1] - 1.0f) / proj[1][1];
+
+		this->z_near = z_near;
+		this->z_far  = z_far;
+		is_ortho = false;
+	}
+	void SetCameraFoV(float FoVy, float width, float height, float z_near)
+	{
+		SetCameraFoV(FoVy, width, height, z_near, z_far);
+	}
 
 	// default values for camera frustum
 	bool is_ortho = false;
@@ -36,6 +68,7 @@ public:
 	float R = +0.5f;
 	float B = -0.5f;
 	float T = +0.5f;
+
 
 	////////////////////////////////////////////////////////////
 	// extrinsic (RT): rotation and translation
