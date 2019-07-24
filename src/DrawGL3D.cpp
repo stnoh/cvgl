@@ -97,7 +97,7 @@ void drawGridXZ(float length, int step)
 ///////////////////////////////////////////////////////////////////////////////
 // camera frustum
 ///////////////////////////////////////////////////////////////////////////////
-void drawPerspCamera(glm::mat4 proj)
+inline void drawPerspCamera(glm::mat4 proj)
 {
 	float z_n = (proj[2][2] - 1.0f) / proj[3][2]; z_n = 1.0f / z_n; // near
 	float z_f = (proj[2][2] + 1.0f) / proj[3][2]; z_f = 1.0f / z_f; // far
@@ -145,7 +145,7 @@ void drawPerspCamera(glm::mat4 proj)
 
 	glEnd();
 }
-void drawOrthoCamera(glm::mat4 proj)
+inline void drawOrthoCamera(glm::mat4 proj)
 {
 	// extract clipping plane from matrix
 	float z_n = -(1.0f + proj[3][2]) / proj[2][2]; // near
@@ -191,6 +191,18 @@ void drawCameraFrustum(glm::mat4 proj)
 		// infinity or not
 		drawPerspCamera(proj);
 	}
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// 3D data
+///////////////////////////////////////////////////////////////////////////////
+void drawPointCloud(const std::vector<glm::vec3>& points)
+{
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, 0, &points[0]);
+	glDrawArrays(GL_POINTS, 0, (GLsizei)points.size());
+	glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 

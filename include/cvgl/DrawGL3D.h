@@ -21,6 +21,9 @@ void drawGridXZ(float length, int step);
 //void drawOrthoCamera(glm::mat4 proj); // no need to expose
 void drawCameraFrustum(glm::mat4 proj);
 
+// 3D data
+void drawPointCloud(const std::vector<glm::vec3>& points);
+
 // lighting
 void setLight(GLenum lightNum, glm::vec4 lightPos,
 	const glm::vec4 ambient  = glm::vec4(0.1f, 0.1f, 0.1f, 0.1f), 
