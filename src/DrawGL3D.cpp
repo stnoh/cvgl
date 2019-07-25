@@ -8,7 +8,7 @@ Author: Seung-Tak Noh (seungtak.noh [at] gmail.com)
 namespace cvgl {
 
 ///////////////////////////////////////////////////////////////////////////////
-// simple primitive
+// simple primitive (GLU)
 ///////////////////////////////////////////////////////////////////////////////
 void drawAxes(float length)
 {
@@ -66,6 +66,23 @@ void drawAxes(float length)
 	glDisable(GL_RESCALE_NORMAL);
 }
 
+void drawSphere(float radius, glm::vec4 color)
+{
+	static bool init = false;
+	static GLUquadricObj *quadratic;
+	if (!init) {
+		quadratic = gluNewQuadric();
+		init = true;
+	}
+
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, glm::value_ptr(color));
+	gluSphere(quadratic, radius, 16, 16);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// simple primitive (GL_LINES)
+///////////////////////////////////////////////////////////////////////////////
 void drawGridXZ(float length, int step)
 {
 	// draw grid on XZ plane
@@ -89,6 +106,42 @@ void drawGridXZ(float length, int step)
 		glVertex3f(-x, 0, z);
 		glVertex3f( x, 0, z);
 	}
+
+	glEnd();
+}
+
+void drawAABB(glm::vec3 minAB, glm::vec3 maxAB)
+{
+	float l = minAB.x;
+	float r = maxAB.x;
+	float t = maxAB.y;
+	float b = minAB.y;
+	float n = minAB.z;
+	float f = maxAB.z;
+
+	// draw properties
+	glLineWidth(1.0f);
+
+	// draw 12 lines
+	glBegin(GL_LINES);
+
+	// near to Z
+	glVertex3f(l, t, n); glVertex3f(r, t, n);
+	glVertex3f(r, t, n); glVertex3f(r, b, n);
+	glVertex3f(r, b, n); glVertex3f(l, b, n);
+	glVertex3f(l, b, n); glVertex3f(l, t, n);
+
+	// far to Z
+	glVertex3f(l, t, f); glVertex3f(r, t, f);
+	glVertex3f(r, t, f); glVertex3f(r, b, f);
+	glVertex3f(r, b, f); glVertex3f(l, b, f);
+	glVertex3f(l, b, f); glVertex3f(l, t, f);
+
+	// between near-far
+	glVertex3f(l, t, n); glVertex3f(l, t, f);
+	glVertex3f(r, t, n); glVertex3f(r, t, f);
+	glVertex3f(l, b, n); glVertex3f(l, b, f);
+	glVertex3f(r, b, n); glVertex3f(r, b, f);
 
 	glEnd();
 }
@@ -197,12 +250,116 @@ void drawCameraFrustum(glm::mat4 proj)
 ///////////////////////////////////////////////////////////////////////////////
 // 3D data
 ///////////////////////////////////////////////////////////////////////////////
+inline glm::u8vec3 getNormalColor(glm::vec3 normal)
+{
+	// coloring is based on "normal = (2*color)-1"
+	// http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-13-normal-mapping/
+	glm::vec3 n = glm::normalize(normal);
+	glm::vec3 c = 127.5 * (n + glm::vec3(1.0));
+	return c;
+}
+inline std::vector<glm::u8vec3> getNormalColors(const std::vector<glm::vec3>& normal)
+{
+	std::vector<glm::u8vec3> colors;
+	for (glm::vec3 _n : normal) {
+		colors.push_back(getNormalColor(_n));
+	}
+
+	return colors;
+}
+
 void drawPointCloud(const std::vector<glm::vec3>& points)
 {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, 0, &points[0]);
 	glDrawArrays(GL_POINTS, 0, (GLsizei)points.size());
 	glDisableClientState(GL_VERTEX_ARRAY);
+}
+void drawPointCloud(const std::vector<glm::vec3>& points, const std::vector<glm::u8vec3>& colors)
+{
+	if (points.size() != colors.size()) {
+		fprintf(stderr, "ERROR: the size of vertex and color is not matched.\n");
+		return;
+	}
+
+	glEnableClientState(GL_COLOR_ARRAY);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, &colors[0]);
+	drawPointCloud(points);
+	glDisableClientState(GL_COLOR_ARRAY);
+}
+
+void drawPointCloud_NormalColor(const std::vector<glm::vec3>& points, const std::vector<glm::vec3>& normals)
+{
+	if (points.size() != normals.size()) {
+		fprintf(stderr, "ERROR: the size of vertex and color is not matched.\n");
+		return;
+	}
+
+	std::vector<glm::u8vec3> colors = getNormalColors(normals);
+	drawPointCloud(points, colors);
+}
+
+void drawTriMesh(const std::vector<glm::vec3>& V, const std::vector<glm::uint>& F)
+{
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, 0, &V[0]);
+	glDrawElements(GL_TRIANGLES, F.size(), GL_UNSIGNED_INT, &F[0]);
+	glDisableClientState(GL_VERTEX_ARRAY);
+}
+void drawTriMesh(const std::vector<glm::vec3>& V, const std::vector<glm::vec3>& N, const std::vector<glm::uint>& F)
+{
+	if (V.size() != N.size()) {
+		fprintf(stderr, "ERROR: the size of vertex and normal is not matched.\n");
+		return;
+	}
+
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glNormalPointer(GL_FLOAT, 0, &N[0]);
+	drawTriMesh(V, F);
+	glDisableClientState(GL_NORMAL_ARRAY);
+}
+void drawTriMesh(const std::vector<glm::vec3>& V, const std::vector<glm::u8vec3>& C, const std::vector<glm::uint>& F)
+{
+	if (V.size() != C.size()) {
+		fprintf(stderr, "ERROR: the size of vertex and color is not matched.\n");
+		return;
+	}
+
+	glEnableClientState(GL_COLOR_ARRAY);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, &C[0]);
+	drawTriMesh(V, F);
+	glDisableClientState(GL_COLOR_ARRAY);
+}
+void drawTriMesh(const std::vector<glm::vec3>& V, const std::vector<glm::vec3>& N, const std::vector<glm::u8vec3>& C, const std::vector<glm::uint>& F)
+{
+	if (V.size() != N.size()) {
+		fprintf(stderr, "ERROR: the size of vertex and normal is not matched.\n");
+		return;
+	}
+	if (V.size() != C.size()) {
+		fprintf(stderr, "ERROR: the size of vertex and color is not matched.\n");
+		return;
+	}
+
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glNormalPointer(GL_FLOAT, 0, &N[0]);
+	glEnableClientState(GL_COLOR_ARRAY);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, &C[0]);
+	drawTriMesh(V, F);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+}
+
+void drawTriMesh_NormalColor(const std::vector<glm::vec3>& V, const std::vector<glm::vec3>& N, const std::vector<glm::uint>& F)
+{
+	if (V.size() != N.size()) {
+		fprintf(stderr, "ERROR: the size of vertex and normal is not matched.\n");
+		return;
+	}
+
+	std::vector<glm::u8vec3> C = getNormalColors(N);
+
+	drawTriMesh(V, C, F);
 }
 
 
