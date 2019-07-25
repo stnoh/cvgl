@@ -118,6 +118,12 @@ void ConvertColorDepthImage2PointCloud(glm::mat4 proj_inv, cv::Mat colorImage, c
 	points.clear();
 	colors.clear();
 
+	// check 8-bit, 3-channel unsigned byte point...
+	if (colorImage.type() != CV_8UC3) {
+		std::cerr << "ERROR: it only allows 8-bit, 3-channel unsigned byte point image..." << std::endl;
+		return;
+	}
+
 	// check 32-bit, 1-channel floating point...
 	if (depthImage.type() != CV_32FC1) {
 		std::cerr << "ERROR: it only allows 32-bit, 1-channel floating point image..." << std::endl;
@@ -153,6 +159,28 @@ void ConvertColorDepthImage2PointCloud(glm::mat4 proj_inv, cv::Mat colorImage, c
 	}
 
 	return;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// convert normal to normalmap color
+///////////////////////////////////////////////////////////////////////////////
+inline glm::u8vec3 getNormalColor(glm::vec3 normal)
+{
+	// coloring is based on "normal = (2*color)-1"
+	// http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-13-normal-mapping/
+	glm::vec3 n = glm::normalize(normal);
+	glm::vec3 c = 127.5f * (n + glm::vec3(1.0));
+	return c;
+}
+std::vector<glm::u8vec3> GetNormalColors(const std::vector<glm::vec3>& normal)
+{
+	std::vector<glm::u8vec3> colors;
+	for (glm::vec3 _n : normal) {
+		colors.push_back(getNormalColor(_n));
+	}
+
+	return colors;
 }
 
 }

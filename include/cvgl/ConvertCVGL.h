@@ -25,6 +25,10 @@ std::vector<glm::vec3> ConvertDepthImage2PointCloud(glm::mat4 proj_inv, cv::Mat 
 void ConvertColorDepthImage2PointCloud(glm::mat4 proj_inv, cv::Mat colorImage, cv::Mat depthImage,
 	std::vector<glm::vec3>& points, std::vector<glm::u8vec3>& colors);
 
+// convert normal to normalmap color
+//inline glm::u8vec3 getNormalColor(glm::vec3 normal); // no need to expose
+std::vector<glm::u8vec3> GetNormalColors(const std::vector<glm::vec3>& normal);
+
 }
 
 #endif

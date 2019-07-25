@@ -29,14 +29,10 @@ void drawCameraFrustum(glm::mat4 proj);
 void drawPointCloud(const std::vector<glm::vec3>& points);
 void drawPointCloud(const std::vector<glm::vec3>& points, const std::vector<glm::u8vec3>& colors);
 
-void drawPointCloud_NormalColor(const std::vector<glm::vec3>& points, const std::vector<glm::vec3>& normals);
-
 void drawTriMesh(const std::vector<glm::vec3>& V, const std::vector<glm::uint>& F);
 void drawTriMesh(const std::vector<glm::vec3>& V, const std::vector<glm::vec3>& N, const std::vector<glm::uint>& F);
 void drawTriMesh(const std::vector<glm::vec3>& V, const std::vector<glm::u8vec3>& C, const std::vector<glm::uint>& F);
 void drawTriMesh(const std::vector<glm::vec3>& V, const std::vector<glm::vec3>& N, const std::vector<glm::u8vec3>& C, const std::vector<glm::uint>& F);
-
-void drawTriMesh_NormalColor(const std::vector<glm::vec3>& V, const std::vector<glm::vec3>& N, const std::vector<glm::uint>& F);
 
 // lighting
 void setLight(GLenum lightNum, glm::vec4 lightPos,

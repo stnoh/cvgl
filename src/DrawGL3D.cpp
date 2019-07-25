@@ -250,24 +250,6 @@ void drawCameraFrustum(glm::mat4 proj)
 ///////////////////////////////////////////////////////////////////////////////
 // 3D data
 ///////////////////////////////////////////////////////////////////////////////
-inline glm::u8vec3 getNormalColor(glm::vec3 normal)
-{
-	// coloring is based on "normal = (2*color)-1"
-	// http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-13-normal-mapping/
-	glm::vec3 n = glm::normalize(normal);
-	glm::vec3 c = 127.5 * (n + glm::vec3(1.0));
-	return c;
-}
-inline std::vector<glm::u8vec3> getNormalColors(const std::vector<glm::vec3>& normal)
-{
-	std::vector<glm::u8vec3> colors;
-	for (glm::vec3 _n : normal) {
-		colors.push_back(getNormalColor(_n));
-	}
-
-	return colors;
-}
-
 void drawPointCloud(const std::vector<glm::vec3>& points)
 {
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -286,17 +268,6 @@ void drawPointCloud(const std::vector<glm::vec3>& points, const std::vector<glm:
 	glColorPointer(3, GL_UNSIGNED_BYTE, 0, &colors[0]);
 	drawPointCloud(points);
 	glDisableClientState(GL_COLOR_ARRAY);
-}
-
-void drawPointCloud_NormalColor(const std::vector<glm::vec3>& points, const std::vector<glm::vec3>& normals)
-{
-	if (points.size() != normals.size()) {
-		fprintf(stderr, "ERROR: the size of vertex and color is not matched.\n");
-		return;
-	}
-
-	std::vector<glm::u8vec3> colors = getNormalColors(normals);
-	drawPointCloud(points, colors);
 }
 
 void drawTriMesh(const std::vector<glm::vec3>& V, const std::vector<glm::uint>& F)
@@ -348,18 +319,6 @@ void drawTriMesh(const std::vector<glm::vec3>& V, const std::vector<glm::vec3>& 
 	drawTriMesh(V, F);
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
-}
-
-void drawTriMesh_NormalColor(const std::vector<glm::vec3>& V, const std::vector<glm::vec3>& N, const std::vector<glm::uint>& F)
-{
-	if (V.size() != N.size()) {
-		fprintf(stderr, "ERROR: the size of vertex and normal is not matched.\n");
-		return;
-	}
-
-	std::vector<glm::u8vec3> C = getNormalColors(N);
-
-	drawTriMesh(V, C, F);
 }
 
 
