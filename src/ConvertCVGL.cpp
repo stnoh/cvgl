@@ -112,4 +112,47 @@ std::vector<glm::vec3> ConvertDepthImage2PointCloud(glm::mat4 proj_inv, cv::Mat 
 	return cloud;
 }
 
+void ConvertColorDepthImage2PointCloud(glm::mat4 proj_inv, cv::Mat colorImage, cv::Mat depthImage,
+	std::vector<glm::vec3>& points, std::vector<glm::u8vec3>& colors)
+{
+	points.clear();
+	colors.clear();
+
+	// check 32-bit, 1-channel floating point...
+	if (depthImage.type() != CV_32FC1) {
+		std::cerr << "ERROR: it only allows 32-bit, 1-channel floating point image..." << std::endl;
+		return;
+	}
+
+	// color and depth image size should be same...
+	if (colorImage.size() != depthImage.size()) {
+		std::cerr << "ERROR: color and depth image size does not match ..." << std::endl;
+		return;
+	}
+
+	int w = depthImage.cols;
+	int h = depthImage.rows;
+
+	// convert buffer value to camera space Z
+	float* depth = (float*)depthImage.data;
+
+	for (int j = 0; j < h; j++)
+	for (int i = 0; i < w; i++)
+	{
+		float d = depth[i + j * w];
+		if (0.0f == d) continue; // filter un-rendered pixel
+
+		glm::vec3 pt2d(i, j, d);
+		points.push_back(convertDepth2Point(proj_inv, pt2d, w, h));
+
+		glm::u8vec3 c;
+		c.b = colorImage.data[3 * (i + j * w) + 0];
+		c.g = colorImage.data[3 * (i + j * w) + 1];
+		c.r = colorImage.data[3 * (i + j * w) + 2];
+		colors.push_back(c);
+	}
+
+	return;
+}
+
 }
