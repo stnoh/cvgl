@@ -7,6 +7,12 @@ project ("cvgl")
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
+## for checking unicode
+#[[
+if(MSVC)
+    add_definitions(-DUNICODE -D_UNICODE)
+endif()
+##]]
 
 ########################################
 # Handling 3rd party libraries

@@ -1,14 +1,14 @@
 #ifndef APP_GL_EXAMPLE_102
 #define APP_GL_EXAMPLE_102
 
-#include "cvgl/AppGLBase.h"
+#include <cvgl/AppGLBase.h>
+
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <opencv2/highgui.hpp>
 
-#include "cvgl/GLCamera.h"
-#include "cvgl/FBO.h"
-
+#include <cvgl/GLCamera.h>
+#include <cvgl/FBO.h>
 
 class AppGL : public AppGLBase
 {
@@ -24,6 +24,9 @@ public:
 
 	// user-defined function
 	void CreatePointCloud();
+
+	void LoadMesh();
+	void SavePointCloud();
 
 private:
 	void drawView3D(glm::mat4 proj, glm::mat4 view);
@@ -49,7 +52,26 @@ private:
 
 	// offscreen renderer
 	cvgl::FBO *offscreenFBO = nullptr;
-	std::vector<glm::vec3> cloud;
+
+	// container for point cloud from renderer
+	std::vector<glm::vec3>   points;
+	std::vector<glm::u8vec3> colors;
+
+	// container for 3D mesh
+	std::vector<glm::vec3> V, N; // vertex/normal
+	std::vector<glm::u8vec3> C;  // vertex color
+	std::vector<glm::uint> F;
+
+	// model matrix for 3D mesh
+	glm::quat ModelRotation;
+	glm::vec3 ModelPosition;
+	float     ModelUniScale;
+	void resetModelMatrix()
+	{
+		ModelUniScale = 1.0f;
+		ModelPosition = glm::vec3(0.0f, 0.0f, 0.0f);;
+		ModelRotation = glm::quat(glm::radians(glm::vec3(0.0f, 0.0f, 0.0f)));
+	}
 };
 
 #endif

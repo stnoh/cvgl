@@ -1,6 +1,9 @@
 #include "AppGL.h"
-#include "cvgl/DrawGL3D.h"
-#include "cvgl/ConvertCVGL.h"
+#include <cvgl/DrawGL3D.h>
+#include <cvgl/ConvertCVGL.h>
+
+#include <cvgl/plyFileIO.h>
+#include <cvgl/PopupWindow.h>
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -59,6 +62,15 @@ void AppGL::drawView3D(glm::mat4 proj, glm::mat4 view)
 		glPushMatrix(); glMultMatrixf(glm::value_ptr(cam_pose));
 		cvgl::drawAxes(1.0f);
 		glPopMatrix();
+
+		// draw 3D mesh (in model space)
+		glm::mat4 model = glm::translate(ModelPosition) * glm::mat4(ModelRotation);
+		model = glm::scale(model, glm::vec3(ModelUniScale));
+		{
+			glPushMatrix(); glMultMatrixf(glm::value_ptr(model));
+			cvgl::drawTriMesh(V, N, C, F);
+			glPopMatrix();
+		}
 	}
 	glDisable(GL_LIGHTING);
 
@@ -67,6 +79,9 @@ void AppGL::drawView3D(glm::mat4 proj, glm::mat4 view)
 	glColor3f(1.0f, 1.0f, 1.0f);
 	cvgl::drawGridXZ(20.0, 20);
 
+	////////////////////////////////////////////////////////////
+	// camera space
+	////////////////////////////////////////////////////////////
 	glColor3f(1.0f, 1.0f, 0.0f);
 	{
 		glPushMatrix();
@@ -78,7 +93,8 @@ void AppGL::drawView3D(glm::mat4 proj, glm::mat4 view)
 
 		// point cloud
 		glPointSize(1.0f);
-		cvgl::drawPointCloud(cloud);
+		cvgl::drawPointCloud(points); // single color for consistency
+		//cvgl::drawPointCloud(points, colors);
 
 		glPopMatrix();
 	}
@@ -97,6 +113,7 @@ bool AppGL::Init()
 
 	resetGlobalView();
 	resetCameraView();
+	resetModelMatrix();
 
 	// instantiate frame buffer object
 	offscreenFBO = new cvgl::FBO();
@@ -117,6 +134,24 @@ bool AppGL::Init()
 	TwAddVarRW(bar, "Global-posZ", TwType::TW_TYPE_FLOAT, &GlobalViewPosition.z, "group='Global' label='posZ' step=0.01");
 #endif
 
+	// model coordinate
+#if 1
+	TwAddButton(bar, "Model-LoadMesh",
+		[](void* client) {
+		AppGL* _this = (AppGL*)client;
+		_this->LoadMesh();
+	}, this, "group='Model' label='LoadMesh' key=F3");
+
+	TwAddButton(bar, "Model-init", [](void *client) {
+		AppGL* _this = (AppGL*)client; _this->resetModelMatrix();
+	}, this, "group='Model' label='init' ");
+	TwAddVarRW(bar, "Model-rot"  , TwType::TW_TYPE_QUAT4F, &ModelRotation  , "group='Model' label='rot'   open");
+	TwAddVarRW(bar, "Model-posX" , TwType::TW_TYPE_FLOAT , &ModelPosition.x, "group='Model' label='posX'  step=0.01");
+	TwAddVarRW(bar, "Model-posY" , TwType::TW_TYPE_FLOAT , &ModelPosition.y, "group='Model' label='posY'  step=0.01");
+	TwAddVarRW(bar, "Model-posZ" , TwType::TW_TYPE_FLOAT , &ModelPosition.z, "group='Model' label='posZ'  step=0.01");
+	TwAddVarRW(bar, "Model-scale", TwType::TW_TYPE_FLOAT , &ModelUniScale  , "group='Model' label='scale' step=0.01");
+#endif
+
 	// view matrix related properties (local camera)
 #if 1
 	TwAddButton(bar, "Local-init", [](void *client) {
@@ -126,14 +161,24 @@ bool AppGL::Init()
 	TwAddVarRW(bar, "Local-posX", TwType::TW_TYPE_FLOAT , &rendercam->position.x, "group='Local' label='posX' step=0.01");
 	TwAddVarRW(bar, "Local-posY", TwType::TW_TYPE_FLOAT , &rendercam->position.y, "group='Local' label='posY' step=0.01");
 	TwAddVarRW(bar, "Local-posZ", TwType::TW_TYPE_FLOAT , &rendercam->position.z, "group='Local' label='posZ' step=0.01");
+
+	TwDefine("Bar/Local opened=false"); // close group as default
 #endif
 
 	// point cloud from rendered depth image
+#if 1
 	TwAddButton(bar, "CreatePointCloud",
 		[](void* client) {
 			AppGL* _this = (AppGL*)client;
 			_this->CreatePointCloud();
 		}, this, "key=SPACE");
+
+	TwAddButton(bar, "SavePointCloud",
+		[](void* client) {
+		AppGL* _this = (AppGL*)client;
+		_this->SavePointCloud();
+	}, this, "key=F4");
+#endif
 
 	// projection matrix related properties
 #if 1
@@ -176,7 +221,8 @@ void AppGL::End()
 void AppGL::CreatePointCloud()
 {
 	// clear point cloud in advance
-	cloud.clear();
+	points.clear();
+	colors.clear();
 
 	////////////////////////////////////////
 	// offscreen rendering to generate data
@@ -213,10 +259,40 @@ void AppGL::CreatePointCloud()
 	cv::imshow("depth", depth);
 #endif
 
-	// convert depth image to point cloud
-	cloud = cvgl::ConvertDepthImage2PointCloud(glm::inverse(proj), depth);
+	// convert color/depth image pair to point cloud
+	cvgl::ConvertColorDepthImage2PointCloud(glm::inverse(proj), color, depth, points, colors);
 
 	return;
+}
+
+void AppGL::LoadMesh()
+{
+	std::string filepath;
+	if (cvgl::OpenFileWindow(filepath, "ply file (*.ply)\0*.ply\0"s))
+	{
+		// load ply mesh
+		printf("loading: %s ... ", filepath.c_str());
+		cvgl::ReadTriMeshPly(filepath.c_str(), V, N, F);
+		printf("[DONE]\n");
+		printf("(V, N, F) = (%d, %d, %d)\n", V.size(), N.size(), F.size() / 3);
+
+		// extract normal color from vertex normals
+		C = cvgl::GetNormalColors(N);
+	}
+}
+void AppGL::SavePointCloud()
+{
+	std::string filepath;
+	if (cvgl::SaveFileWindow(filepath, "ply file (*.ply)\0*.ply\0"s))
+	{
+		// add view normal
+		std::vector<glm::vec3> normals(points.size(), glm::vec3(0.0f, 0.0f, 1.0f));
+
+		// save ply with view normal
+		printf("writing: %s ... ", filepath.c_str());
+		cvgl::WritePointCloudPly(filepath.c_str(), points, normals, colors);
+		printf("[DONE]\n");
+	}
 }
 
 
