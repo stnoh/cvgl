@@ -38,7 +38,7 @@ const glm::mat4 GLCamera::GetProjMatrix()
 	return proj;
 }
 
-void GLCamera::SetCameraMatrixCV(std::vector<float> camParams4x1, float z_near)
+void GLCamera::SetCameraMatrixCV(const std::vector<float>& camParams4x1, float z_near)
 {
 	is_inf = true;
 	this->z_near = z_near;
@@ -55,7 +55,7 @@ void GLCamera::SetCameraMatrixCV(std::vector<float> camParams4x1, float z_near)
 	B = -(1.0f - cy) / fy;
 	T = +cy / fy;
 }
-void GLCamera::SetCameraMatrixCV(std::vector<float> camParams4x1, float z_near, float z_far)
+void GLCamera::SetCameraMatrixCV(const std::vector<float>& camParams4x1, float z_near, float z_far)
 {
 	SetCameraMatrixCV(camParams4x1, z_near);
 

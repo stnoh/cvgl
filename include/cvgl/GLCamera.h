@@ -37,8 +37,8 @@ public:
 	}
 
 	// set projection matrix by normalized camera matrix [0.0:1.0]
-	void SetCameraMatrixCV(std::vector<float> camParams4x1, float z_near);
-	void SetCameraMatrixCV(std::vector<float> camParams4x1, float z_near, float z_far);
+	void SetCameraMatrixCV(const std::vector<float>& camParams4x1, float z_near);
+	void SetCameraMatrixCV(const std::vector<float>& camParams4x1, float z_near, float z_far);
 
 	void SetCameraFoV(float FoVy_deg, float width, float height, float z_near, float z_far)
 	{

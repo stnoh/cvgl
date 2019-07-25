@@ -55,7 +55,7 @@ cv::Mat GetRenderedDepthImage32F(int w, int h)
 // convert depth image (cv::Mat) to point cloud (in GL coordinate)
 // similar to glm::unProject, but it provides more efficient routine
 ///////////////////////////////////////////////////////////////////////////////
-inline glm::vec3 convertDepth2Point(glm::mat4 proj_inv, glm::vec3 pt_img, float width, float height)
+inline glm::vec3 convertDepth2Point(const glm::mat4& proj_inv, glm::vec3 pt_img, float width, float height)
 {
 	// normalize point on 2D image plane
 	pt_img.x = (pt_img.x + 0.5f) / width;
@@ -69,7 +69,8 @@ inline glm::vec3 convertDepth2Point(glm::mat4 proj_inv, glm::vec3 pt_img, float 
 	return pt3d / pt3d.w;
 }
 
-std::vector<glm::vec3> ConvertDepthImage2PointCloud(glm::mat4 proj_inv, cv::Mat depthImage, bool full)
+std::vector<glm::vec3> ConvertDepthImage2PointCloud(const glm::mat4 proj_inv,
+	const cv::Mat& depthImage, const bool full)
 {
 	// check 32-bit, 1-channel floating point...
 	if (depthImage.type() != CV_32FC1) {
@@ -112,7 +113,8 @@ std::vector<glm::vec3> ConvertDepthImage2PointCloud(glm::mat4 proj_inv, cv::Mat 
 	return cloud;
 }
 
-void ConvertColorDepthImage2PointCloud(glm::mat4 proj_inv, cv::Mat colorImage, cv::Mat depthImage,
+void ConvertColorDepthImage2PointCloud(const glm::mat4 proj_inv,
+	const cv::Mat& colorImage, const cv::Mat& depthImage,
 	std::vector<glm::vec3>& points, std::vector<glm::u8vec3>& colors)
 {
 	points.clear();
@@ -165,7 +167,7 @@ void ConvertColorDepthImage2PointCloud(glm::mat4 proj_inv, cv::Mat colorImage, c
 ///////////////////////////////////////////////////////////////////////////////
 // convert normal to normalmap color
 ///////////////////////////////////////////////////////////////////////////////
-inline glm::u8vec3 getNormalColor(glm::vec3 normal)
+inline glm::u8vec3 getNormalColor(const glm::vec3& normal)
 {
 	// coloring is based on "normal = (2*color)-1"
 	// http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-13-normal-mapping/
