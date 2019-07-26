@@ -3,38 +3,55 @@
 # GLFW_FOUND
 # GLFW_INCLUDE_DIR
 # GLFW_LIBRARIES
+# GLFW_BINARIES
 
 find_path (GLFW_INCLUDE_DIR
-    NAMES
-        GLFW/glfw3.h
-    PATHS
-        "${GLFW_ROOT}/include"
-    DOC
-        "The directory where GLFW/glfw.h resides"
+  NAMES
+    GLFW/glfw3.h
+  PATHS
+    "${GLFW_ROOT}/include"
+  DOC
+    "The directory where GLFW/glfw.h resides"
 )
 
 if (WIN32 AND MSVC14 OR (${MSVC_VERSION} EQUAL 1900))
-    find_library (GLFW_LIBRARIES
-        NAMES
-            glfw3dll
-        PATHS
-            "${GLFW_ROOT}/lib/x64"
-        DOC
-            "The GLFW library"
-    )
+  find_library (GLFW_LIBRARIES
+    NAMES
+      glfw3dll
+    PATHS
+      "${GLFW_ROOT}/lib/x64"
+    DOC
+      "The GLFW library"
+  )
 else()
-	message(WARNING "We do not support this environment yet.")
+  message(WARNING "We do not support this environment yet.")
+endif()
+
+if (WIN32 AND MSVC14 OR (${MSVC_VERSION} EQUAL 1900))
+  find_file (GLFW_BINARIES
+    NAMES
+      glfw3.dll
+    PATHS
+      "3rdParty/GLFW/bin64"
+    DOC
+      "The GLFW prebuilt binary"
+  )
+else()
+  message(WARNING "We do not support this environment yet.")
 endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GLFW DEFAULT_MSG GLFW_LIBRARIES GLFW_INCLUDE_DIR)
-
 
 if(GLFW_FOUND)
   set(GLFW_INCLUDE_DIR ${GLFW_INCLUDE_DIR})
 
   if(NOT GLFW_LIBRARIES)
     set(GLFW_LIBRARIES ${GLFW_LIBRARIES})
+  endif()
+
+  if(NOT GLFW_BINARIES)
+    set(GLFW_BINARIES    ${GLFW_BINARIES})
   endif()
 
   if (NOT TARGET GLFW::GLFW)

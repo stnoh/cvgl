@@ -1,25 +1,43 @@
 # [TEMPORARY CMAKE FILE FOR AntTweakBar]
 
+# ANTTWEAKBAR_FOUND
+# ANTTWEAKBAR_INCLUDE_DIR
+# ANTTWEAKBAR_LIBRARIES
+# ANTTWEAKBAR_BINARIES
+
 find_path (ANTTWEAKBAR_INCLUDE_DIR
-    NAMES
-        anttweakbar.h
-    PATHS
-        "${ANTTWEAKBAR_ROOT}/include"
-    DOC
-        "The directory where AntTweakBar.h resides"
+  NAMES
+    anttweakbar.h
+  PATHS
+    "${ANTTWEAKBAR_ROOT}/include"
+  DOC
+    "The directory where AntTweakBar.h resides"
 )
 
 if (WIN32 AND MSVC14 OR (${MSVC_VERSION} EQUAL 1900))
-    find_library (ANTTWEAKBAR_LIBRARIES
-        NAMES
-            anttweakbar64
-        PATHS
-            "${ANTTWEAKBAR_ROOT}/lib/x64"
-        DOC
-            "The AntTweakBar library"
-    )
+  find_library (ANTTWEAKBAR_LIBRARIES
+    NAMES
+      anttweakbar64
+    PATHS
+      "${ANTTWEAKBAR_ROOT}/lib/x64"
+    DOC
+      "The AntTweakBar library"
+  )
 else()
 	message(WARNING "We do not support this environment yet.")
+endif()
+
+if (WIN32 AND MSVC14 OR (${MSVC_VERSION} EQUAL 1900))
+  find_file (ANTTWEAKBAR_BINARIES
+    NAMES
+      anttweakbar64.dll
+    PATHS
+      "${ANTTWEAKBAR_ROOT}/bin64"
+    DOC
+      "The AntTweakBar prebuilt binary"
+  )
+else()
+  message(WARNING "We do not support this environment yet.")
 endif()
 
 include(FindPackageHandleStandardArgs)
@@ -30,7 +48,11 @@ if(ANTTWEAKBAR_FOUND)
   set(ANTTWEAKBAR_INCLUDE_DIR ${ANTTWEAKBAR_INCLUDE_DIR})
 
   if(NOT ANTTWEAKBAR_LIBRARIES)
-    set(ANTTWEAKBAR_LIBRARIES ${ANTTWEAKBAR_LIBRARIES})
+    set(ANTTWEAKBAR_LIBRARIES   ${ANTTWEAKBAR_LIBRARIES})
+  endif()
+
+  if(NOT ANTTWEAKBAR_BINARIES)
+    set(ANTTWEAKBAR_BINARIES    ${ANTTWEAKBAR_BINARIES})
   endif()
 
   if (NOT TARGET AntTweakBar::Lib)
