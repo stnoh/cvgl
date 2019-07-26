@@ -56,6 +56,8 @@ void AppGL::drawView3D(glm::mat4 proj, glm::mat4 view)
 
 	// draw 3D axes (with lighting)
 	glEnable(GL_LIGHTING);
+	glEnable(GL_RESCALE_NORMAL);
+
 	cvgl::setLight(GL_LIGHT0, glm::vec4(-1.0f, -1.0f, -1.0f, 0.0f));
 	cvgl::drawAxes(1.0f);
 	{
@@ -72,7 +74,9 @@ void AppGL::drawView3D(glm::mat4 proj, glm::mat4 view)
 			glPopMatrix();
 		}
 	}
+
 	glDisable(GL_LIGHTING);
+	glDisable(GL_RESCALE_NORMAL);
 
 	// draw 3D grid
 	glLineWidth(1.0f);

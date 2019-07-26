@@ -15,6 +15,7 @@ void drawAxes(float length)
 	float materialR[4] = { 1.0f, 0.0f, 0.0f, 0.0f };
 	float materialG[4] = { 0.0f, 1.0f, 0.0f, 0.0f };
 	float materialB[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
+	float materialW[4] = { 1.0f, 1.0f, 1.0f, 0.0f };
 
 	static bool init = false;
 	static GLUquadricObj *quadratic;
@@ -24,9 +25,6 @@ void drawAxes(float length)
 	}
 
 	float radius = length*0.05f;
-
-	glEnable(GL_LIGHTING);
-	glEnable(GL_RESCALE_NORMAL);
 
 	// Z-axis
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, materialB);
@@ -62,8 +60,8 @@ void drawAxes(float length)
 
 	glPopMatrix();
 
-	glDisable(GL_LIGHTING);
-	glDisable(GL_RESCALE_NORMAL);
+	// set material color to default (white)
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, materialW);
 }
 
 void drawSphere(float radius, glm::vec4 color)
