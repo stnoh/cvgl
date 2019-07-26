@@ -165,6 +165,45 @@ void ConvertColorDepthImage2PointCloud(const glm::mat4 proj_inv,
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// check vertex visibility using depth information
+///////////////////////////////////////////////////////////////////////////////
+std::set<glm::uint> GetVisibleVertexIndices(
+	glm::mat4 ProjViewModel, const std::vector<glm::vec3>& model_verts,
+	const cv::Mat& depthImage, const float threshold)
+{
+	std::set<glm::uint> v_indices;
+
+	// convert buffer value to camera space Z
+	float* depth = (float*)depthImage.data;
+	int w = depthImage.cols;
+	int h = depthImage.rows;
+
+	for (int vidx = 0; vidx < model_verts.size(); vidx++)
+	{
+		glm::vec4 pt_proj = ProjViewModel * glm::vec4(model_verts[vidx], 1.0f);
+		glm::vec3 pt_NDC = pt_proj / pt_proj.w;
+
+		// filter 1) out of screen
+		if (pt_NDC.x < -1.0 || +1.0 < pt_NDC.x ||
+			pt_NDC.y < -1.0 || +1.0 < pt_NDC.y) continue;
+
+		// filter 2) compare to rendered depth
+		glm::vec2 pt2d = glm::vec2(0.5f * (pt_NDC + 1.0f));
+		int i = w * (pt2d.x);
+		int j = h * (1.0f - pt2d.y); // [CAUTION] FLIPPED
+		float d = depth[i + j * w];
+		float pixel_z = 2.0f * d - 1.0f;
+
+		if (glm::length(pt_NDC.z - pixel_z) > threshold) continue;
+
+		v_indices.insert(vidx);
+	}
+
+	return v_indices;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
 // convert normal to normalmap color
 ///////////////////////////////////////////////////////////////////////////////
 inline glm::u8vec3 getNormalColor(const glm::vec3& normal)
