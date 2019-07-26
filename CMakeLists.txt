@@ -41,17 +41,31 @@ find_package(ANTTWEAKBAR REQUIRED)
 set(OPENCV_ROOT ${CMAKE_SOURCE_DIR}/3rdParty/OpenCV)
 find_package(OPENCV REQUIRED)
 
-########################################
+
+###############################################################################
 # Main library (cvgl)
-########################################
+###############################################################################
+set(CVGL_HEADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/cvgl)
+set(CVGL_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
 file(GLOB
   headers
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/cvgl/*.h
+  "${CVGL_HEADER_DIR}/*.h"
 )
 file(GLOB
   sources
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+  "${CVGL_SOURCE_DIR}/*.cpp"
 )
+
+########################################
+## Optional libraries
+########################################
+
+## [TODO]
+
+########################################
+## cvgl build
+########################################
 add_library(cvgl STATIC ${headers} ${sources})
 
 ## add header-only library
@@ -61,7 +75,7 @@ target_include_directories(cvgl PUBLIC
 )
 
 ########################################
-## 3rd party libraries 
+## 3rd party libraries (mandatory)
 ########################################
 ## link *.lib
 target_link_libraries(cvgl
@@ -73,8 +87,8 @@ target_link_libraries(cvgl
 macro(copy_3rdparty_dlls APP)
   add_custom_command(TARGET ${APP} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${GLEW_ROOT}/bin64/glew32.dll	${CMAKE_CURRENT_BINARY_DIR}	## GLEW
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${GLFW_BINARIES}	${CMAKE_CURRENT_BINARY_DIR} ## GLFW
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ANTTWEAKBAR_BINARIES}  ${CMAKE_CURRENT_BINARY_DIR}  ## AntTweakBar
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${GLFW_BINARIES}        ${CMAKE_CURRENT_BINARY_DIR} ## GLFW
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ANTTWEAKBAR_BINARIES} ${CMAKE_CURRENT_BINARY_DIR} ## AntTweakBar
 
     ## OpenCV (minimum)
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENCV_BINARY_DIR}/opencv_core2413.dll   	${CMAKE_CURRENT_BINARY_DIR}
