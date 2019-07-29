@@ -7,6 +7,7 @@ Author: Seung-Tak Noh (seungtak.noh [at] gmail.com)
 
 #include <GL/glew.h>
 #include <vector>
+#include <functional>
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
@@ -80,10 +81,21 @@ public:
 		glm::mat4 R = glm::toMat4(rotation);
 		return T * R;
 	}
+	void SetPoseMatrixGL(const glm::mat4& poseGL)
+	{
+		rotation = glm::quat(poseGL);
+		position = glm::vec3(poseGL[3]);
+	}
 
 	// extrinsic (RT)
 	glm::vec3 position;
 	glm::quat rotation;
+
+
+	////////////////////////////////////////////////////////////
+	// set camera coordinate (=pose matrix)
+	////////////////////////////////////////////////////////////
+	void SetCameraCoord(std::function<void(void)> func, bool drawFrustum=false);
 };
 
 }

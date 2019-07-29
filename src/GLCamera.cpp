@@ -3,6 +3,7 @@ GL camera class that manages projection and modelview matrices
 Author: Seung-Tak Noh (seungtak.noh [at] gmail.com)
 ******************************************************************************/
 #include "cvgl/GLCamera.h"
+#include "cvgl/DrawGL3D.h"
 
 using namespace cvgl;
 
@@ -62,4 +63,22 @@ void GLCamera::SetCameraMatrixCV(const std::vector<float>& camParams4x1, float z
 	// overwrite
 	is_inf = false;
 	this->z_far = z_far;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// set camera coordinate (=pose matrix), draw frustum as option
+///////////////////////////////////////////////////////////////////////////////
+void GLCamera::SetCameraCoord(std::function<void(void)> func, bool drawFrustum)
+{
+	glm::mat4 proj = GetProjMatrix();
+	glm::mat4 pose = GetPoseMatrix();
+
+	glPushMatrix();
+	glMultMatrixf(glm::value_ptr(pose));
+	if (drawFrustum) cvgl::drawCameraFrustum(proj);
+
+	func();
+
+	glPopMatrix();
 }
