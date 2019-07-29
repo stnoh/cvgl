@@ -70,6 +70,16 @@ if(NOT RSSDK_FOUND)
   list(REMOVE_ITEM sources ${CVGL_SOURCE_DIR}/RSCamera.cpp)
 endif()
 
+## Kinect2
+set(KINECT2_ROOT "C:/Program Files/Microsoft SDKs/Kinect/v2.0_1409")
+find_package(KINECT2)
+
+if(NOT KINECT2_FOUND)
+  list(REMOVE_ITEM headers ${CVGL_HEADER_DIR}/Kinect2.h)
+  list(REMOVE_ITEM sources ${CVGL_SOURCE_DIR}/Kinect2.cpp)
+endif()
+
+
 ########################################
 ## cvgl build
 ########################################
@@ -110,6 +120,11 @@ if(RSSDK_FOUND)
     ${RSSDK_INCLUDE_DIR}
   )
 endif()
+if(KINECT2_FOUND)
+  target_include_directories(cvgl PUBLIC
+    ${KINECT2_INCLUDE_DIR}
+  )
+endif()
 
 ##############################################################################
 # Sub-directories: [TODO] add new project as subdirectory
@@ -121,3 +136,5 @@ add_subdirectory(examples/example103)
 if(RSSDK_FOUND)
   add_subdirectory(examples/example201)
 endif()
+
+add_subdirectory(examples/example202)

@@ -28,4 +28,5 @@ Due to this, this repository does not support various OS environment.
 
 You may need to install camera driver (RealSense) to build & run some of code.  
 
-- [RSSDK](https://software.intel.com/en-us/realsense-sdk-windows-eol/notice): At this moment, I only support previous RSSDK for Windows. I tested this code with 2016R3. This should be updated with [librealsense](https://github.com/IntelRealSense/librealsense) in the near future.  
+- [RSSDK](https://software.intel.com/en-us/realsense-sdk-windows-eol/notice)-2016R3: At this moment, I only support previous RSSDK for Windows. I tested this code with 2016R3. This should be updated with [librealsense](https://github.com/IntelRealSense/librealsense) in the near future.  
+- [Kinect2](https://www.microsoft.com/en-us/download/details.aspx?id=44561)-v2.0_1409: At this moment, I only support previous Kinect2 SDK for Windows. This might be replaced with [libfreenect2](https://github.com/OpenKinect/libfreenect2), but I cannot guarantee I will support this later...  
