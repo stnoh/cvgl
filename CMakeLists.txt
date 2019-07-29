@@ -61,7 +61,14 @@ file(GLOB
 ## Optional libraries
 ########################################
 
-## [TODO]
+## RSSDK
+set(RSSDK_ROOT "C:/Program Files (x86)/Intel/RSSDK")
+find_package(RSSDK)
+
+if(NOT RSSDK_FOUND)
+  list(REMOVE_ITEM headers ${CVGL_HEADER_DIR}/RSCamera.h)
+  list(REMOVE_ITEM sources ${CVGL_SOURCE_DIR}/RSCamera.cpp)
+endif()
 
 ########################################
 ## cvgl build
@@ -97,6 +104,12 @@ macro(copy_3rdparty_dlls APP)
   )
 endmacro()
 
+## RSSDK
+if(RSSDK_FOUND)
+  target_include_directories(cvgl PUBLIC
+    ${RSSDK_INCLUDE_DIR}
+  )
+endif()
 
 ##############################################################################
 # Sub-directories: [TODO] add new project as subdirectory
@@ -105,4 +118,6 @@ add_subdirectory(examples/example101)
 add_subdirectory(examples/example102)
 add_subdirectory(examples/example103)
 
-add_subdirectory(examples/example201)
+if(RSSDK_FOUND)
+  add_subdirectory(examples/example201)
+endif()

@@ -22,6 +22,10 @@ Due to this, this repository does not support various OS environment.
 - OpenCV: 2.4.13.6
 - AntTweakBar: 1.16b
 
-### optional: optional prebuilt binaries
+### optional
 
-[TODO]
+#### Depth Camera SDKs
+
+You may need to install camera driver (RealSense) to build & run some of code.  
+
+- [RSSDK](https://software.intel.com/en-us/realsense-sdk-windows-eol/notice): At this moment, I only support previous RSSDK for Windows. I tested this code with 2016R3. This should be updated with [librealsense](https://github.com/IntelRealSense/librealsense) in the near future.  
