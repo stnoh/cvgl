@@ -120,6 +120,8 @@ if(RSSDK_FOUND)
     ${RSSDK_INCLUDE_DIR}
   )
 endif()
+
+## Kinect2
 if(KINECT2_FOUND)
   target_include_directories(cvgl PUBLIC
     ${KINECT2_INCLUDE_DIR}
@@ -137,4 +139,6 @@ if(RSSDK_FOUND)
   add_subdirectory(examples/example201)
 endif()
 
-add_subdirectory(examples/example202)
+if(KINECT2_FOUND)
+  add_subdirectory(examples/example202)
+endif()
