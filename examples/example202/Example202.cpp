@@ -11,12 +11,23 @@ void Example202::Draw(const int width, const int height)
 	// left / right
 	int w = width / 2;
 
-	// [TODO]
+	cv::Mat img;
+	double scale = 255.0 / 8000.0;
+
+	cv::Size imgSize = cv::Size(w, height);
+	switch (imgType) {
+	case COLOR: img = kinect2->GetColorImage(); imgSize = kinect2->GetColorImage().size(); scale = 1.0; break;
+	case DEPTH: img = kinect2->GetDepthImage(); imgSize = kinect2->GetDepthImage().size(); break;
+	case IR   : img = kinect2->GetIrImage();    imgSize = kinect2->GetIrImage().size();    break;
+	default: break;
+	}
+	float aspect_inv = (float)imgSize.height / (float)imgSize.width;
+	int h = (int)(aspect_inv * (float)w);
 
 	// viewport settings ( 0:left / 1:right )
 	cv::Rect viewport[2] = {
 		cv::Rect(0, 0, w, height),
-		cv::Rect(w, 0, w, height)
+		cv::Rect(w, 0, w, h)
 	};
 
 	glEnable(GL_SCISSOR_TEST); // to cut left/right viewport
@@ -41,13 +52,15 @@ void Example202::Draw(const int width, const int height)
 		else {
 			// right side: local viewer
 			glDisable(GL_DEPTH_TEST);
-			// [TODO] draw image
+			if (show_raw_image) cvgl::drawImage(img, viewport[id], scale);
 			glEnable(GL_DEPTH_TEST);
 
 			// 3D point cloud in local view
-			glm::mat4 proj = (COLOR == imgType) ? colorCamGL->GetProjMatrix() : depthCamGL->GetProjMatrix();
-			glm::mat4 view = (COLOR == imgType) ? colorCamGL->GetViewMatrix() : depthCamGL->GetViewMatrix();
-			drawView3D(proj, view);
+			if (COLOR != imgType) {
+				glm::mat4 proj = depthCamGL->GetProjMatrix();
+				glm::mat4 view = depthCamGL->GetViewMatrix();
+				drawView3D(proj, view);
+			}
 			glDisable(GL_DEPTH_TEST);
 		}
 	}
@@ -58,14 +71,16 @@ void Example202::drawView3D(glm::mat4 proj, glm::mat4 view)
 	glMatrixMode(GL_PROJECTION); glLoadMatrixf(glm::value_ptr(proj));
 	glMatrixMode(GL_MODELVIEW);  glLoadMatrixf(glm::value_ptr(view));
 
-	// color camera
-	glColor3f(1.0f, 0.0f, 0.0f);
-	colorCamGL->SetCameraCoord([](){}, true);
-
 	// depth camera
 	glColor3f(1.0f, 1.0f, 0.0f);
 	depthCamGL->SetCameraCoord([&](){
-		// [TODO] point cloud
+			// point cloud
+			if (show_pointcloud) {
+				std::vector<glm::vec3>   points;
+				std::vector<glm::u8vec3> colors;
+				kinect2->GetPointCloud(points, colors);
+				cvgl::drawPointCloud(points, colors);
+			}
 		}, true);
 }
 
@@ -75,19 +90,12 @@ void Example202::drawView3D(glm::mat4 proj, glm::mat4 view)
 ///////////////////////////////////////////////////////////////////////////////
 bool Example202::Init()
 {
-	// [TODO] initialize camera object
+	// initialize camera object
+	kinect2 = new cvgl::Kinect2();
+	kinect2->Init();
 
-	// color camera
-	colorCamGL = new cvgl::GLCamera();
-	{
-		// [TODO] set color camera matrix
-	}
-
-	// depth camera: 15[cm] - 1.2[m]
+	// depth camera: 50[cm] - 8.0[m]
 	depthCamGL = new cvgl::GLCamera();
-	{
-		// [TODO] set depth camera matrix
-	}
 
 	// initialize global viewer
 	resetGlobalView();
@@ -122,15 +130,24 @@ bool Example202::Init()
 }
 void Example202::End()
 {
-	// [TODO] remove camera object
+	// remove camera object
+	if (kinect2) {
+		kinect2->End();
+		delete kinect2;
+	}
 
-	if (colorCamGL) delete colorCamGL;
 	if (depthCamGL) delete depthCamGL;
 }
 
 bool Example202::Update()
 {
-	// [TODO] update camera object
+	// update camera object
+	kinect2->Update();
+
+	// always update calibration due to API problem ...
+	std::vector<float> camParams4x1; glm::mat4 pose;
+	kinect2->GetCalibData(0, camParams4x1, pose);
+	depthCamGL->SetCameraMatrixCV(camParams4x1, 0.50f, 8.00f);
 
 	return true;
 }
@@ -141,7 +158,7 @@ bool Example202::Update()
 ///////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
 {
-	Example202 app(1280, 480);
+	Example202 app(1024, 424); // depth: 512x424
 
 	app.SetInternalProcess(true); // always update for RGBD camera
 	app.run();

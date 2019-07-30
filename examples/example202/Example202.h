@@ -8,6 +8,7 @@
 #include <opencv2/highgui.hpp>
 
 #include <cvgl/GLCamera.h>
+#include <cvgl/Kinect2.h>
 
 class Example202 : public AppGLBase
 {
@@ -38,12 +39,12 @@ private:
 	}
 
 	// local viewer
-	enum RawImage { INVALID = -1, COLOR, DEPTH, IR } imgType = RawImage::COLOR;
+	enum RawImage { INVALID = -1, COLOR, DEPTH, IR } imgType = RawImage::IR;
 	bool show_raw_image  = true;
 	bool show_pointcloud = true;
 
 	// RGB-D camera & camera objects
-	cvgl::GLCamera *colorCamGL = nullptr;
+	cvgl::Kinect2  *kinect2 = nullptr;
 	cvgl::GLCamera *depthCamGL = nullptr;
 };
 
