@@ -66,7 +66,7 @@ void Example103::drawView3D(glm::mat4 proj, glm::mat4 view)
 		glEnable(GL_LIGHTING);
 
 		// draw 3D axes
-		if (V.size() == 0) cvgl::drawAxes(1.0f);
+		if (V.empty()) cvgl::drawAxes(1.0f);
 
 		// draw original mesh
 		cvgl::drawTriMesh(V, N, F);

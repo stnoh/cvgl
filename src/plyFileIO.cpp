@@ -108,7 +108,7 @@ void _WritePly(const char* filepath, const std::vector<glm::vec3> P,
 {
 	// check vertex normal size
 	if (!existN) {
-		if (0 != N.size() && P.size() != N.size()) {
+		if ( !N.empty() && P.size() != N.size()) {
 			fprintf(stderr, "ERROR: normal data exists, but it does not match with size of position data.\n");
 			return;
 		}
@@ -116,7 +116,7 @@ void _WritePly(const char* filepath, const std::vector<glm::vec3> P,
 
 	// check vertex color size
 	if (!existC) {
-		if (0 != C.size() && P.size() != C.size()) {
+		if ( !C.empty() && P.size() != C.size()) {
 			fprintf(stderr, "ERROR: color data exists, but it does not match with size of position data.\n");
 			return;
 		}
@@ -124,7 +124,7 @@ void _WritePly(const char* filepath, const std::vector<glm::vec3> P,
 
 	// check face size
 	if (!existF) {
-		if (0 != F.size() && 0 != F.size() % 3) {
+		if ( !F.empty() && 0 != F.size() % 3) {
 			fprintf(stderr, "ERROR: face information exists, but it has an error in size.\n");
 			return;
 		}
