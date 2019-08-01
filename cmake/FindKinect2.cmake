@@ -40,6 +40,10 @@ if(KINECT2_FOUND)
       INTERFACE_INCLUDE_DIRECTORIES "${KINECT2_INCLUDE_DIR}"
       IMPORTED_LOCATION "${KINECT2_LIBRARY_DIR}/Kinect20.lib")
 
+    add_library(Kinect2::Fusion MODULE IMPORTED)
+    set_target_properties(Kinect2::Fusion PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES "${KINECT2_INCLUDE_DIR}"
+      IMPORTED_LOCATION "${KINECT2_LIBRARY_DIR}/Kinect20.Fusion.lib")
   endif()
 
 endif()
