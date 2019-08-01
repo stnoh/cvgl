@@ -11,6 +11,7 @@ Any suggestion or push request are welcomed.
 These are included in this repository as git submodule.
 
 - [GLM](https://glm.g-truc.net): 0.9.8  
+- [pugiXML](https://github.com/zeux/pugixml/): v1.9 (optional)  
 
 ### [3rdParty](https://github.com/stnoh/3rdParty): mandatory prebuilt binaries
 
