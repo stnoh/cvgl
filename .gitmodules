@@ -7,3 +7,6 @@
 [submodule "external/pugixml"]
 	path = external/pugixml
 	url = https://github.com/stnoh/pugixml
+[submodule "optional/protobuf"]
+	path = optional/protobuf
+	url = https://github.com/stnoh/protobuf

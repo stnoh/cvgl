@@ -79,6 +79,9 @@ if(NOT KINECT2_FOUND)
   list(REMOVE_ITEM sources ${CVGL_SOURCE_DIR}/Kinect2.cpp)
 endif()
 
+## protocol buffer
+set(PROTOBUF_ROOT ${CMAKE_SOURCE_DIR}/optional/protobuf)
+find_package(PROTOBUF)
 
 ########################################
 ## cvgl build

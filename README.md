@@ -23,11 +23,13 @@ Due to this, this repository does not support various OS environment.
 - OpenCV: 2.4.13.6
 - AntTweakBar: 1.16b
 
-### optional
+### optional: prebuilt binaries
+
+- [protobuf](https://developers.google.com/protocol-buffers/): v3.8.0 (2019-05-29), built by VS2017 with **vc140 toolset (VS2015)**.  
 
 #### Depth Camera SDKs
 
-You may need to install camera driver (RealSense) to build & run some of code.  
+You may need to install camera driver (RealSense) to build & run some examples.
 
 - [RSSDK](https://software.intel.com/en-us/realsense-sdk-windows-eol/notice)-2016R3: At this moment, I only support previous RSSDK for Windows. I tested this code with 2016R3. This should be updated with [librealsense](https://github.com/IntelRealSense/librealsense) in the near future.  
 - [Kinect2](https://www.microsoft.com/en-us/download/details.aspx?id=44561)-v2.0_1409: At this moment, I only support previous Kinect2 SDK for Windows. This might be replaced with [libfreenect2](https://github.com/OpenKinect/libfreenect2), but I cannot guarantee I will support this later...  
