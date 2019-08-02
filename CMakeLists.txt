@@ -146,6 +146,6 @@ if(KINECT2_FOUND)
   add_subdirectory(examples/example202)
 endif()
 
-if(KINECT2_FOUND AND PROTOBUF_FOUND)
+if(KINECT2_FOUND AND PROTOBUF_FOUND AND RSSDK_FOUND)
   add_subdirectory(optional/KinectFusionExplorer-D2D)
 endif()
