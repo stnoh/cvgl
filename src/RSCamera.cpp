@@ -257,7 +257,8 @@ bool RSCamera::initRSCameraSetting()
 			for (int i = 0; i < 3; i++){
 				rMat.at<double>(cv::Point(j, i)) = camTransform.rotation[i][j];
 			}
-			cv::Vec3f   tVec(camTransform.translation);
+			cv::Vec3f tVec(camTransform.translation);
+			tVec *= mm2m; // change [mm] to [m]
 
 			fs << "depth_to_color_rmat" << rMat;
 			fs << "depth_to_color_tvec" << tVec;

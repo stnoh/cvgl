@@ -5,6 +5,7 @@ Author: Seung-Tak Noh (seungtak.noh [at] gmail.com)
 #include "cvgl/PopupWindow.h"
 #include <ctime>
 #include <iostream>
+#include <codecvt>
 
 namespace cvgl {
 
@@ -54,6 +55,7 @@ std::wstring str2wstr(const std::string str)
 }
 std::string wstr2str(const std::wstring wstr)
 {
+	/*
 	std::string _str = "";
 	_str.assign(wstr.begin(), wstr.end());
 	const char* filePath_c_str = _str.c_str();
@@ -65,7 +67,10 @@ std::string wstr2str(const std::wstring wstr)
 		if (c == 92) c = 47;
 		str += c;
 	}
+	//*/
 
+	// replace with codecvt
+	std::string str = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(wstr);
 	return str;
 }
 
@@ -106,7 +111,7 @@ bool OpenFileWindow(std::string &filePath, const std::string filter)
 	if (TRUE != GetOpenFileName(&ofn)) return false;
 
 	#if UNICODE
-		filePath = std::string(wstr2str(ofn.lpstrFile));
+		filePath = wstr2str(ofn.lpstrFile);
 	#else
 		filePath = std::string(ofn.lpstrFile);
 	#endif
@@ -181,7 +186,7 @@ bool SaveFileWindow(std::string &filePath, const std::string filter)
 	if (TRUE != GetSaveFileName(&ofn)) return false;
 
 	#if UNICODE
-		filePath = std::string(wstr2str(ofn.lpstrFile));
+		filePath = wstr2str(ofn.lpstrFile);
 	#else
 		filePath = std::string(ofn.lpstrFile);
 	#endif
