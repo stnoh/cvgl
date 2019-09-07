@@ -149,6 +149,7 @@ if(KINECT2_FOUND AND PROTOBUF_FOUND)
 	${CMAKE_SOURCE_DIR}/optional/KinectFusionEx
     ${CMAKE_SOURCE_DIR}/external/pugixml/src
   )
+  add_definitions(-DPUGIXML_HEADER_ONLY)
 
   target_link_libraries(KinectFusionEx Kinect2::Fusion protobuf::libprotobuf)
 endif()
