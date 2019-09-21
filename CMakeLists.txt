@@ -147,6 +147,7 @@ if(KINECT2_FOUND AND PROTOBUF_FOUND)
 
   target_include_directories(KinectFusionEx PUBLIC
 	${CMAKE_SOURCE_DIR}/optional/KinectFusionEx
+    ${CMAKE_SOURCE_DIR}/external/glm
     ${CMAKE_SOURCE_DIR}/external/pugixml/src
   )
   add_definitions(-DPUGIXML_HEADER_ONLY)

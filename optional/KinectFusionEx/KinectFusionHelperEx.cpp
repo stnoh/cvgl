@@ -10,6 +10,50 @@
 #include "voxelData.pb.h"
 
 /// <summary>
+/// Simple coordinate conversion from Kinect-CV coordinate (right, down, forward, right-handed)
+/// to OpenGL coordinate (right, up, backward, right-handed)
+/// </summary>
+Matrix4 ConvertGL2Kinect(const glm::mat4& matGL)
+{
+	Matrix4 mat;
+
+	// rotation
+	mat.M11 = +matGL[0][0]; mat.M12 = -matGL[0][1]; mat.M13 = -matGL[0][2];
+	mat.M21 = -matGL[1][0]; mat.M22 = +matGL[1][1]; mat.M23 = +matGL[1][2];
+	mat.M31 = -matGL[2][0]; mat.M32 = +matGL[2][1]; mat.M33 = +matGL[2][2];
+
+	// translantion
+	mat.M41 = +matGL[3][0]; mat.M42 = -matGL[3][1]; mat.M43 = -matGL[3][2];
+
+	// affine matrix
+	mat.M14 = mat.M24 = mat.M34 = 0.0f; mat.M44 = 1.0f;
+
+	return mat;
+}
+
+/// <summary>
+/// Simple coordinate conversion from OpenGL coordinate (right, up, backward, right-handed)
+/// to Kinect-CV coordinate (right, down, forward, right-handed)
+/// </summary>
+glm::mat4 ConvertKinect2GL(const Matrix4& mat)
+{
+	glm::mat4 matGL;
+
+	// rotation
+	matGL[0][0] = +mat.M11; matGL[0][1] = -mat.M12; matGL[0][2] = -mat.M13;
+	matGL[1][0] = -mat.M21; matGL[1][1] = +mat.M22; matGL[1][2] = +mat.M23;
+	matGL[2][0] = -mat.M31; matGL[2][1] = +mat.M32; matGL[2][2] = +mat.M33;
+
+	// translantion
+	matGL[3][0] = +mat.M41; matGL[3][1] = -mat.M42; matGL[3][2] = -mat.M43;
+
+	// affine matrix
+	matGL[0][3] = matGL[1][3] = matGL[2][3] = 0.0f; matGL[3][3] = 1.0f;
+
+	return matGL;
+}
+
+/// <summary>
 /// import volumetric data in XML formatted file
 /// </summary>
 bool LoadXML(const char* xmlFile, KinfuData& kinfuData)

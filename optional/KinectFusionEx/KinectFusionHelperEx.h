@@ -7,6 +7,19 @@
 
 #include <vector>
 #include "NuiKinectFusionApi.h"
+#include <glm/glm.hpp>
+
+/// <summary>
+/// Simple coordinate conversion from Kinect-CV coordinate (right, down, forward, right-handed)
+/// to OpenGL coordinate (right, up, backward, right-handed)
+/// </summary>
+Matrix4 ConvertGL2Kinect(const glm::mat4& matGL);
+
+/// <summary>
+/// Simple coordinate conversion from OpenGL coordinate (right, up, backward, right-handed)
+/// to Kinect-CV coordinate (right, down, forward, right-handed)
+/// </summary>
+glm::mat4 ConvertKinect2GL(const Matrix4& mat);
 
 /// <summary>
 /// data format for TSDF volume save/load
