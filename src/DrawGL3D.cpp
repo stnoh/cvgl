@@ -117,9 +117,6 @@ void drawAABB(glm::vec3 minAB, glm::vec3 maxAB)
 	float n = minAB.z;
 	float f = maxAB.z;
 
-	// draw properties
-	glLineWidth(1.0f);
-
 	// draw 12 lines
 	glBegin(GL_LINES);
 
