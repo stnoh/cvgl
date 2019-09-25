@@ -19,6 +19,11 @@ if(MSVC)
 endif()
 ##]]
 
+## common path for data
+set(SHARED_DATA_PATH ${CMAKE_SOURCE_DIR}/data CACHE PATH "location of shared data")
+add_definitions(-DSHARED_DATA_PATH=\"${SHARED_DATA_PATH}\")
+
+
 ########################################
 # Handling 3rd party libraries
 ########################################

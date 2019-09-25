@@ -56,8 +56,8 @@ void Example201::Draw(const int width, const int height)
 			glEnable(GL_DEPTH_TEST);
 
 			// 3D point cloud in local view
-			glm::mat4 proj = (COLOR == imgType) ? colorCamGL->GetProjMatrix() : depthCamGL->GetProjMatrix();
-			glm::mat4 view = (COLOR == imgType) ? colorCamGL->GetViewMatrix() : depthCamGL->GetViewMatrix();
+			glm::mat4 proj = (COLOR == imgType) ? glCameraRig->GetProjMatrix(1) : glCameraRig->GetProjMatrix(0);
+			glm::mat4 view = (COLOR == imgType) ? glCameraRig->GetViewMatrix(1) : glCameraRig->GetViewMatrix(0);
 			drawView3D(proj, view);
 			glDisable(GL_DEPTH_TEST);
 		}
@@ -69,20 +69,24 @@ void Example201::drawView3D(glm::mat4 proj, glm::mat4 view)
 	glMatrixMode(GL_PROJECTION); glLoadMatrixf(glm::value_ptr(proj));
 	glMatrixMode(GL_MODELVIEW);  glLoadMatrixf(glm::value_ptr(view));
 
-	// color camera
-	glColor3f(1.0f, 0.0f, 0.0f);
-	colorCamGL->SetCameraCoord([](){}, true);
+	// draw color/depth camera together
+	glCameraRig->DrawCameraRig();
 
-	// depth camera
-	glColor3f(1.0f, 1.0f, 0.0f);
-	depthCamGL->SetCameraCoord([&](){
-			if (show_pointcloud) {
-				std::vector<glm::vec3>   points;
-				std::vector<glm::u8vec3> colors;
-				camera->GetPointCloud(points, colors);
-				cvgl::drawPointCloud(points, colors);
-			}
-		}, true);
+	// draw point cloud from depth image
+	if (show_pointcloud) {
+		glm::mat4 depth_view = glCameraRig->GetViewMatrix(0);
+		glm::mat4 depth_pose = glm::inverse(depth_view);
+
+		glPushMatrix();
+		glMultMatrixf(glm::value_ptr(depth_pose));
+
+		std::vector<glm::vec3>   points;
+		std::vector<glm::u8vec3> colors;
+		camera->GetPointCloud(points, colors);
+		cvgl::drawPointCloud(points, colors);
+
+		glPopMatrix();
+	}
 }
 
 
@@ -93,27 +97,18 @@ bool Example201::Init()
 {
 	// initialize camera object
 	camera = new cvgl::RSCamera();
+
+	// read calibration data (if exists)
+#ifdef SHARED_DATA_PATH
+	char calib_data[1024];
+	sprintf_s(calib_data, "%s/calib_rgbd.xml", SHARED_DATA_PATH);
+	camera->ReadCalibrationData(calib_data);
+#endif
+	// instantiate color/depth camera rig
+	glCameraRig = new cvgl::GLCameraRig();
+	glCameraRig->Init(camera);
+
 	camera->InitLive();
-
-	// color camera
-	colorCamGL = new cvgl::GLCamera();
-	{
-		std::vector<float> camParams4x1; glm::mat4 pose;
-		camera->GetCalibData(1, camParams4x1, pose);
-
-		colorCamGL->SetCameraMatrixCV(camParams4x1, 0.01f);
-		colorCamGL->SetPoseMatrixGL(pose);
-	}
-
-	// depth camera: 15[cm] - 1.2[m]
-	depthCamGL = new cvgl::GLCamera();
-	{
-		std::vector<float> camParams4x1; glm::mat4 pose;
-		camera->GetCalibData(0, camParams4x1, pose);
-
-		depthCamGL->SetCameraMatrixCV(camParams4x1, 0.15f, 1.20f);
-		depthCamGL->SetPoseMatrixGL(pose);
-	}
 
 	// initialize global viewer
 	resetGlobalView();
@@ -154,8 +149,7 @@ void Example201::End()
 		delete camera;
 	}
 
-	if (colorCamGL) delete colorCamGL;
-	if (depthCamGL) delete depthCamGL;
+	if (glCameraRig) delete glCameraRig;
 }
 
 bool Example201::Update()

@@ -44,9 +44,8 @@ private:
 	bool show_pointcloud = true;
 
 	// RGB-D camera & camera objects
-	cvgl::RSCamera *camera = nullptr;
-	cvgl::GLCamera *colorCamGL = nullptr;
-	cvgl::GLCamera *depthCamGL = nullptr;
+	cvgl::RSCamera    *camera      = nullptr;
+	cvgl::GLCameraRig *glCameraRig = nullptr;
 };
 
 #endif
