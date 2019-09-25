@@ -12,6 +12,8 @@ Author: Seung-Tak Noh (seungtak.noh [at] gmail.com)
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
+#include <cvgl/RGBDCamera.h>
+
 namespace cvgl {
 
 class GLCamera
@@ -96,6 +98,39 @@ public:
 	// set camera coordinate (=pose matrix)
 	////////////////////////////////////////////////////////////
 	void SetCameraCoord(std::function<void(void)> func, bool drawFrustum=false);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// RGB-D camera rig by GLCamera
+// 0: depth camera (origin) / 1: color camera
+///////////////////////////////////////////////////////////////////////////////
+class GLCameraRig
+{
+public:
+	GLCameraRig();
+	virtual ~GLCameraRig();
+
+	bool Init(const char* calibXmlFile);
+	bool Init(RGBDCamera* camera);
+
+	void SetCameraPoseGL(int id, glm::mat4 pose);
+	glm::mat4 GetProjMatrix(int id)
+	{
+		return (0 == id) ? glDepthCam->GetProjMatrix() : glColorCam->GetProjMatrix();
+	}
+	glm::mat4 GetViewMatrix(int id)
+	{
+		return (0 == id) ? glDepthCam->GetViewMatrix() : glColorCam->GetViewMatrix();
+	}
+
+	void DrawCameraRig();
+
+private:
+	GLCamera *glColorCam = nullptr;
+	GLCamera *glDepthCam = nullptr;
+
+	glm::mat4 Color2Depth;
+	glm::mat4 Depth2Color;
 };
 
 }
