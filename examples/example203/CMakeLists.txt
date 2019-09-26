@@ -1,4 +1,4 @@
-﻿add_executable (example203 "Example203.cpp")
+﻿add_executable (example203 "Example203.cpp" "KinectFusionGL.cpp")
 
 target_link_libraries(example203 cvgl KinectFusionEx)
 
