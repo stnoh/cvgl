@@ -106,47 +106,27 @@ bool KinectFusionGL::InitVolume(NUI_FUSION_RECONSTRUCTION_PARAMETERS params)
 	return true;
 }
 
-bool KinectFusionGL::InitCamera(const std::vector<float>& depthCamParams4x1,
-	const cv::Size& depthImageSize, const float clipMin, const float clipMax)
+bool KinectFusionGL::InitCamera(int id, const std::vector<float>& camParams4x1, const cv::Size& imageSize)
 {
 	HRESULT hr = S_OK;
 
-	releaseKinfuImages(); // for safety
+	releaseKinfuImages(id); // for safety
 
-	// set depth camera information
-	this->depthImageSize = depthImageSize;
-	this->depthCameraParams = NUI_FUSION_CAMERA_PARAMETERS{
-		depthCamParams4x1[0], depthCamParams4x1[1],
-		depthCamParams4x1[2], depthCamParams4x1[3]
+	// set camera information
+	int width  = imageSize.width;
+	int height = imageSize.height;
+
+	NUI_FUSION_CAMERA_PARAMETERS cameraParams = NUI_FUSION_CAMERA_PARAMETERS{
+		camParams4x1[0], camParams4x1[1], camParams4x1[2], camParams4x1[3]
 	};
 
-	if (!createKinfuImages()) {
-		fprintf(stderr, "ERROR: cannot initialize KinectFusion image containers.\n");
-		return false;
-	}
+	hr = NuiFusionCreateImageFrame(NUI_FUSION_IMAGE_TYPE_POINT_CLOUD,
+		width, height, &cameraParams, &m_pRaycastPointCloud[id]);
+	CHECK_ERROR(hr, "cannot create image frame");
 
-	minDepthClip = clipMin;
-	maxDepthClip = clipMax;
-
-	return true;
-}
-bool KinectFusionGL::createKinfuImages()
-{
-	HRESULT hr = S_OK;
-
-	int width  = depthImageSize.width;
-	int height = depthImageSize.height;
-
-	for (int i = 0; i < 2; i++)
-	{
-		hr = NuiFusionCreateImageFrame(NUI_FUSION_IMAGE_TYPE_POINT_CLOUD,
-			width, height, &depthCameraParams, &m_pRaycastPointCloud[i]);
-		CHECK_ERROR(hr, "cannot create image frame");
-
-		hr = NuiFusionCreateImageFrame(NUI_FUSION_IMAGE_TYPE_COLOR,
-			width, height, &depthCameraParams, &m_pCapturedSurfaceColor[i]);
-		CHECK_ERROR(hr, "cannot create image frame");
-	}
+	hr = NuiFusionCreateImageFrame(NUI_FUSION_IMAGE_TYPE_COLOR,
+		width, height, &cameraParams, &m_pCapturedSurfaceColor[id]);
+	CHECK_ERROR(hr, "cannot create image frame");
 
 	return true;
 }
@@ -229,15 +209,13 @@ void KinectFusionGL::End()
 	SafeRelease(m_pVolume);
 
 	// clean up images
-	releaseKinfuImages();
+	for (int id = 0; id < 2; id++) releaseKinfuImages(id);
 }
-void KinectFusionGL::releaseKinfuImages()
+void KinectFusionGL::releaseKinfuImages(int id)
 {
 	// release image
-	SAFE_FUSION_RELEASE_IMAGE_FRAME(m_pRaycastPointCloud[0]);
-	SAFE_FUSION_RELEASE_IMAGE_FRAME(m_pRaycastPointCloud[1]);
-	SAFE_FUSION_RELEASE_IMAGE_FRAME(m_pCapturedSurfaceColor[0]);
-	SAFE_FUSION_RELEASE_IMAGE_FRAME(m_pCapturedSurfaceColor[1]);
+	SAFE_FUSION_RELEASE_IMAGE_FRAME(m_pRaycastPointCloud[id]);
+	SAFE_FUSION_RELEASE_IMAGE_FRAME(m_pCapturedSurfaceColor[id]);
 }
 
 

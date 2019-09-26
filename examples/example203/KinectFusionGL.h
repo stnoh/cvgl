@@ -26,8 +26,7 @@ public:
 
 	// initializer / finalizer
 	bool InitVolume(NUI_FUSION_RECONSTRUCTION_PARAMETERS params = { 384.0f, 128,128,128 });
-	bool InitCamera(const std::vector<float>& depthCamParams4x1,
-		const cv::Size& depthImageSize, const float clipMin, const float clipMax);
+	bool InitCamera(int id, const std::vector<float>& camParams4x1, const cv::Size& imageSize);
 	void End();
 
 	// File I/O
@@ -58,8 +57,7 @@ private:
 	////////////////////////////////////////////////////////////
 	// for visualization
 	////////////////////////////////////////////////////////////
-	bool createKinfuImages();
-	void releaseKinfuImages();
+	void releaseKinfuImages(int id);
 
 	bool resetVolumeTransform();
 	bool recreateVolume();
@@ -68,11 +66,6 @@ private:
 		const NUI_FUSION_IMAGE_FRAME* pointCloudFrame, const NUI_FUSION_IMAGE_FRAME* colorFrame,
 		std::vector<glm::vec3>& points, std::vector<glm::vec3>& normals, std::vector<glm::u8vec3>& colors);
 	
-	NUI_FUSION_CAMERA_PARAMETERS depthCameraParams;
-	cv::Size depthImageSize;
-	float minDepthClip;
-	float maxDepthClip;
-
 	NUI_FUSION_IMAGE_FRAME* m_pRaycastPointCloud   [2] = { nullptr, nullptr };
 	NUI_FUSION_IMAGE_FRAME* m_pCapturedSurfaceColor[2] = { nullptr, nullptr };
 };
