@@ -7,6 +7,14 @@ Author: Seung-Tak Noh (seungtak.noh [at] gmail.com)
 #include <iostream>
 #include <codecvt>
 
+// OS-depdendent headers
+#ifdef _WIN32
+#include <Windows.h>
+#include <ShObjIdl_core.h>
+#elif
+// header to handle OpenFileDialog in Linux or MACOS ************************** [TODO]
+#endif
+
 namespace cvgl {
 
 std::string GetCurrentDateTime()
@@ -203,6 +211,52 @@ bool SaveFileWindow(std::string &filePath, const std::string filter)
 #endif
 
 	return true;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// open folder through native file dialog window
+///////////////////////////////////////////////////////////////////////////////
+bool OpenFolderWindow(std::string &folderPath)
+{
+#ifdef _WIN32
+	IFileDialog *pfd;
+	bool ret = false;
+
+	if (SUCCEEDED(CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pfd))))
+	{
+		// set "folder" as picking item
+		DWORD dwOptions;
+		if (SUCCEEDED(pfd->GetOptions(&dwOptions)))
+		{
+			pfd->SetOptions(dwOptions | FOS_PICKFOLDERS);
+			// is it possible to show files in this dialog? ******************* [TODO] find smarter way
+		}
+
+		// get "folder" path as std::string
+		if (SUCCEEDED(pfd->Show(NULL)))
+		{
+			IShellItem *psi;
+			if (SUCCEEDED(pfd->GetResult(&psi)))
+			{
+				LPWSTR wFolderPath;
+				if (SUCCEEDED(psi->GetDisplayName(SIGDN_DESKTOPABSOLUTEPARSING, &wFolderPath)))
+				{
+					folderPath = wstr2str(wFolderPath);
+					ret = true;
+				}
+				psi->Release();
+			}
+		}
+	}
+
+	pfd->Release();
+#elif
+	// equivalent code in Linux or MACOS ************************************** [TODO]
+	std::cerr << "ERROR: it only supports Windows ..." << std::endl;
+#endif
+
+	return ret;
 }
 
 }
