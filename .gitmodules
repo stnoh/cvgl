@@ -13,3 +13,6 @@
 [submodule "optional/KinectFusionExplorer-D2D"]
 	path = optional/KinectFusionExplorer-D2D
 	url = https://github.com/stnoh/KinectFusionExplorer-D2D
+[submodule "external/dirent"]
+	path = external/dirent
+	url = https://github.com/tronkko/dirent

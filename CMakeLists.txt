@@ -97,6 +97,7 @@ add_library(cvgl STATIC ${headers} ${sources})
 target_include_directories(cvgl PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_SOURCE_DIR}/external/glm
+  ${CMAKE_SOURCE_DIR}/external/dirent/include
 )
 
 ########################################
