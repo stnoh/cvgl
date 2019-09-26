@@ -38,6 +38,14 @@ public:
 		float AFoV = 2.0f * glm::degrees( atan2(1.0f, value) );
 		return AFoV;
 	}
+	const std::vector<float> GetCameraMatrixCV()
+	{
+		float fx = 1.0f / (R - L);
+		float fy = 1.0f / (T - B);
+		float cx = -L * fx;
+		float cy = +T * fy;
+		return std::vector<float>{fx, fy, cx, cy};
+	}
 
 	// set projection matrix by normalized camera matrix [0.0:1.0]
 	void SetCameraMatrixCV(const std::vector<float>& camParams4x1, float z_near);
@@ -112,6 +120,11 @@ public:
 
 	bool Init(const char* calibXmlFile);
 	bool Init(RGBDCamera* camera);
+
+	const std::vector<float> GetCameraMatrixCV(int id)
+	{
+		return (0 == id) ? glDepthCam->GetCameraMatrixCV() : glColorCam->GetCameraMatrixCV();
+	}
 
 	void SetCameraPoseGL(int id, glm::mat4 pose);
 	glm::mat4 GetProjMatrix(int id)
