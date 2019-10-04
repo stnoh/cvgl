@@ -12,11 +12,12 @@ These are included in this repository as git submodule.
 
 - [GLM](https://glm.g-truc.net): 0.9.8  
 - [pugiXML](https://github.com/zeux/pugixml/): v1.9 (optional)  
+- [dirent](https://github.com/tronkko/dirent): commit c885633 (2019-02-26, latest) (optional)
 
 ### [3rdParty](https://github.com/stnoh/3rdParty): mandatory prebuilt binaries
 
 These are also managed by git submodule, but it contains prebuilt binaries due to build complexity.  
-Due to this, this repository does not support various OS environment.  
+From this choice, this repository cannot support various OS environment.  
 
 - GLFW: 3.3.0
 - GLEW: 2.1.0
@@ -31,5 +32,7 @@ Due to this, this repository does not support various OS environment.
 
 You may need to install camera driver (RealSense) to build & run some examples.
 
-- [RSSDK](https://software.intel.com/en-us/realsense-sdk-windows-eol/notice)-2016R3: At this moment, I only support previous RSSDK for Windows. I tested this code with 2016R3. This should be updated with [librealsense](https://github.com/IntelRealSense/librealsense) in the near future.  
-- [Kinect2](https://www.microsoft.com/en-us/download/details.aspx?id=44561)-v2.0_1409: At this moment, I only support previous Kinect2 SDK for Windows. This might be replaced with [libfreenect2](https://github.com/OpenKinect/libfreenect2), but I cannot guarantee I will support this later...  
+- [RSSDK](https://software.intel.com/en-us/realsense-sdk-windows-eol/notice)-2016R3: At this moment, I only support previous RSSDK for Windows.  
+  I tested this code with 2016R3. This should be updated with [librealsense](https://github.com/IntelRealSense/librealsense) in the near future.  
+- [Kinect2](https://www.microsoft.com/en-us/download/details.aspx?id=44561)-v2.0_1409: At this moment, I only support previous Kinect2 SDK for Windows.  
+  This might be replaced with [libfreenect2](https://github.com/OpenKinect/libfreenect2), but I cannot guarantee I will support this later...  
