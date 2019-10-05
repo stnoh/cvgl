@@ -78,7 +78,7 @@ private:
 	// control on registered 2d images
 	cvgl::GLCameraRig *glCameraRig = nullptr;
 
-	enum ImageType { INVALID = -1, COLOR, VIRTUAL_DEPTH } imgType = ImageType::COLOR;
+	cvgl::RawImage imgType = cvgl::RawImage::COLOR;
 
 	void changeLocalView(int _view_num) {
 		if (_view_num < 0 || registered_cameras_count <= _view_num) {

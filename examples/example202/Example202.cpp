@@ -16,9 +16,9 @@ void Example202::Draw(const int width, const int height)
 
 	cv::Size imgSize = cv::Size(w, height);
 	switch (imgType) {
-	case COLOR: img = kinect2->GetColorImage(); imgSize = kinect2->GetColorImage().size(); scale = 1.0; break;
-	case DEPTH: img = kinect2->GetDepthImage(); imgSize = kinect2->GetDepthImage().size(); break;
-	case IR   : img = kinect2->GetIrImage();    imgSize = kinect2->GetIrImage().size();    break;
+	case cvgl::RawImage::COLOR: img = kinect2->GetColorImage(); imgSize = kinect2->GetColorImage().size(); scale = 1.0; break;
+	case cvgl::RawImage::DEPTH: img = kinect2->GetDepthImage(); imgSize = kinect2->GetDepthImage().size(); break;
+	case cvgl::RawImage::IR   : img = kinect2->GetIrImage();    imgSize = kinect2->GetIrImage().size();    break;
 	default: break;
 	}
 	float aspect_inv = (float)imgSize.height / (float)imgSize.width;
@@ -56,7 +56,7 @@ void Example202::Draw(const int width, const int height)
 			glEnable(GL_DEPTH_TEST);
 
 			// 3D point cloud in local view
-			if (COLOR != imgType) {
+			if (cvgl::RawImage::COLOR != imgType) {
 				glm::mat4 proj = depthCamGL->GetProjMatrix();
 				glm::mat4 view = depthCamGL->GetViewMatrix();
 				drawView3D(proj, view);
@@ -116,10 +116,10 @@ bool Example202::Init()
 #endif
 
 	// local viewer (2D image)
-	std::vector<TwEnumVal> imageTypeEV = { { RawImage::INVALID, "<EMPTY>" },
-		{ RawImage::COLOR, "Color" },
-		{ RawImage::DEPTH, "Depth" },
-		{ RawImage::IR   , "Infrared" } };
+	std::vector<TwEnumVal> imageTypeEV = { { cvgl::RawImage::INVALID, "<EMPTY>" },
+		{ cvgl::RawImage::COLOR, "Color" },
+		{ cvgl::RawImage::DEPTH, "Depth" },
+		{ cvgl::RawImage::IR   , "Infrared" } };
 	TwType twImageType = TwDefineEnum("Raw image", &imageTypeEV[0], (unsigned int)imageTypeEV.size());
 	TwAddVarRW(bar, "Raw image", twImageType, &imgType, NULL);
 

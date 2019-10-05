@@ -67,7 +67,7 @@ void Example203::Draw(const int width, const int height)
 	int h = height;
 	
 	// 
-	float ratio = (ImageType::COLOR == imgType) ? 1920.0/1080.0 : 640.0/480.0 ;
+	float ratio = (cvgl::RawImage::COLOR == imgType) ? 1920.0/1080.0 : 640.0/480.0 ;
 
 	// viewport settings ( 0:left / 1:right )
 	cv::Rect viewport[2];
@@ -91,7 +91,7 @@ void Example203::Draw(const int width, const int height)
 		// right side: local viewer
 		else {
 			// show raw color image
-			if (COLOR == imgType && show_raw_image)
+			if (cvgl::RawImage::COLOR == imgType && show_raw_image)
 			{
 				if (0 < registered_cameras_count && -1 != current_view_num)
 				{
@@ -101,7 +101,7 @@ void Example203::Draw(const int width, const int height)
 				}
 			}
 
-			glm::mat4 proj = glCameraRig->GetProjMatrix( (ImageType::COLOR == imgType) ? 1 : 0 );
+			glm::mat4 proj = glCameraRig->GetProjMatrix( (cvgl::RawImage::COLOR == imgType) ? 1 : 0 );
 			drawView3D(proj, view_matrix[1], 1);
 		}
 	}
@@ -245,9 +245,9 @@ bool Example203::Init()
 
 	// setting for local view
 #if 1
-	std::vector<TwEnumVal> imageTypeEV = { { ImageType::INVALID, "<EMPTY>" },
-		{ ImageType::VIRTUAL_DEPTH, "VirtualDepth" },
-		{ ImageType::COLOR, "Color" } };
+	std::vector<TwEnumVal> imageTypeEV = { { cvgl::RawImage::INVALID, "<EMPTY>" },
+		{ cvgl::RawImage::DEPTH, "VirtualDepth" },
+		{ cvgl::RawImage::COLOR, "Color" } };
 	TwType twImageType = TwDefineEnum("Raw image", &imageTypeEV[0], (unsigned int)imageTypeEV.size());
 	TwAddVarRW(bar, "Raw image", twImageType, &imgType, " group='Local' label='Raw image' ");
 
@@ -287,7 +287,7 @@ bool Example203::Update()
 	////////////////////////////////////////////////////////////
 	glm::mat4 view = glm::translate(glm::mat4(1.0f), -GlobalViewPosition);
 	view_matrix[0] = view * glm::toMat4(GlobalViewRotation);
-	view_matrix[1] = glCameraRig->GetViewMatrix( (ImageType::COLOR == imgType) ? 1 : 0 );
+	view_matrix[1] = glCameraRig->GetViewMatrix( (cvgl::RawImage::COLOR == imgType) ? 1 : 0 );
 
 	// update point cloud data
 #if 1

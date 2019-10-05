@@ -13,6 +13,8 @@ namespace cvgl {
 const float mm2m = 0.001f; // [mm] to [m]
 const int record_frame_max = (int)(1.0 * 60 * 30); // 1.0[min] x 60[sec/min] x 30[frame/sec]
 
+enum RawImage { INVALID = -1, COLOR, DEPTH, IR };
+
 class RGBDCamera
 {
 public:

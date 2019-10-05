@@ -39,7 +39,7 @@ private:
 	}
 
 	// local viewer
-	enum RawImage { INVALID = -1, COLOR, DEPTH, IR } imgType = RawImage::COLOR;
+	cvgl::RawImage imgType = cvgl::RawImage::COLOR;
 	bool show_raw_image  = true;
 	bool show_pointcloud = true;
 
