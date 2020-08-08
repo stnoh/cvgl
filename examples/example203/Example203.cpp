@@ -5,6 +5,8 @@
 #include <cvgl/DrawGL2D.h>
 #include <cvgl/DrawGL3D.h>
 
+#include <cvgl/plyFileIO.h>
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // [TEMPORARY] file utility
@@ -220,6 +222,8 @@ bool Example203::Init()
 	TwAddVarRO(bar, "voxelsX", TwType::TW_TYPE_UINT32, &reconsParams.voxelCountX, " group='File' ");
 	TwAddVarRO(bar, "voxelsY", TwType::TW_TYPE_UINT32, &reconsParams.voxelCountY, " group='File' ");
 	TwAddVarRO(bar, "voxelsZ", TwType::TW_TYPE_UINT32, &reconsParams.voxelCountZ, " group='File' ");
+
+	TwAddButton(bar, "Mesh", [](void* client) { ((Example203*)client)->ExtractMesh(); }, this, " group='File' key=F1 ");
 #endif
 
 	// load images
@@ -358,6 +362,19 @@ void Example203::LoadImages()
 
 		// update the number of registered images
 		registered_cameras_count = registered_cameras_pose.size();
+	}
+}
+
+void Example203::ExtractMesh()
+{
+	std::vector<glm::vec3> V, N;
+	std::vector<glm::u8vec3> C;
+	std::vector<glm::uint> F;
+	kinfu->GetTriMesh(V, N, C, F);
+
+	std::string filepath;
+	if (cvgl::SaveFileWindow(filepath, "ply file (*.ply)\0*.ply\0"s)) {
+		cvgl::WriteTriMeshPly(filepath.c_str(), V, N, C, F);
 	}
 }
 

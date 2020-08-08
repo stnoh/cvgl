@@ -27,6 +27,8 @@ public:
 	void LoadXML();
 	void LoadImages();
 
+	void ExtractMesh();
+
 private:
 	void drawView3D(glm::mat4 proj, glm::mat4 view, const int id);
 	glm::vec4 LightDir = glm::vec4(-1, -1, -1, 0);
