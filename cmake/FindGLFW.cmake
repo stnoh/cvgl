@@ -32,7 +32,7 @@ if (WIN32 AND MSVC14 OR (${MSVC_VERSION} EQUAL 1900))
     NAMES
       glfw3.dll
     PATHS
-      "3rdParty/GLFW/bin64"
+      "${GLFW_ROOT}/bin64"
     DOC
       "The GLFW prebuilt binary"
   )

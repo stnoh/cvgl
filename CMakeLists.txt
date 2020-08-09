@@ -46,6 +46,9 @@ find_package(ANTTWEAKBAR REQUIRED)
 set(OPENCV_ROOT ${CMAKE_SOURCE_DIR}/3rdParty/OpenCV)
 find_package(OPENCV REQUIRED)
 
+## ArUco
+set(ARUCO_ROOT ${CMAKE_SOURCE_DIR}/3rdParty/ArUco)
+find_package(ARUCO)
 
 ###############################################################################
 # Main library (cvgl)
