@@ -116,10 +116,13 @@ bool GLCameraRig::Init(RGBDCamera* camera)
 	camera->GetCalibData(1, camParamsColor, camPoseColor); // id #1
 
 	// GLCamera for visualization
+	float z_near = 0.2f, z_far = 1.2f; // default value for RSCamera
+	camera->GetClippingPlane(&z_near, &z_far);
+
 	glColorCam = new GLCamera();
-	glColorCam->SetCameraMatrixCV(camParamsColor, 0.15f); // slightly nearer than depth cam
+	glColorCam->SetCameraMatrixCV(camParamsColor, z_near * 0.75f); // slightly nearer than depth cam
 	glDepthCam = new GLCamera();
-	glDepthCam->SetCameraMatrixCV(camParamsDepth, 0.2f, 1.2f); // valid depth [0.2:1.2] [m]
+	glDepthCam->SetCameraMatrixCV(camParamsDepth, z_near, z_far); // valid depth
 
 	// set initial relative pose
 	Depth2Color = camPoseColor;

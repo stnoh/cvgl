@@ -66,6 +66,11 @@ public:
 	const cv::Size& GetColorImageSize() { return color_size; };
 	const cv::Size& GetDepthImageSize() { return depth_size; };
 
+	void GetClippingPlane(float *z_near, float *z_far) { 
+		*z_near = mm2m * (float)(depth_clipping_near);
+		*z_far  = mm2m * (float)(depth_clipping_far);
+	};
+
 protected:
 
 	////////////////////////////////////////////////////////////
