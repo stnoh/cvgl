@@ -20,6 +20,10 @@ if (WIN32 AND MSVC14 OR (${MSVC_VERSION} EQUAL 1900))
       opencv_core2413.lib
       opencv_highgui2413.lib
       opencv_imgproc2413.lib
+      opencv_calib3d2413.lib
+      opencv_features2d2413.lib
+      opencv_flann2413.lib
+      opencv_ml2413.lib
     PATHS
       "${OPENCV_ROOT}/lib/x64"
     DOC
@@ -35,6 +39,10 @@ if (WIN32 AND MSVC14 OR (${MSVC_VERSION} EQUAL 1900))
       opencv_core2413.dll
       opencv_highgui2413.dll
       opencv_imgproc2413.dll
+      opencv_calib3d2413.dll
+      opencv_features2d2413.dll
+      opencv_flann2413.dll
+      opencv_ml2413.dll
     PATHS
       "${OPENCV_ROOT}/bin64"
     DOC
@@ -73,6 +81,26 @@ if(OPENCV_FOUND)
     set_target_properties(OpenCV::ImgProc PROPERTIES
       INTERFACE_INCLUDE_DIRECTORIES "${OPENCV_INCLUDE_DIR}"
       IMPORTED_LOCATION "${OPENCV_LIBRARY_DIR}/opencv_imgproc2413.lib")
+
+    add_library(OpenCV::Calib3d MODULE IMPORTED)
+    set_target_properties(OpenCV::Calib3d PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES "${OPENCV_INCLUDE_DIR}"
+      IMPORTED_LOCATION "${OPENCV_LIBRARY_DIR}/opencv_calib3d2413.lib")
+
+    add_library(OpenCV::Features2d MODULE IMPORTED)
+    set_target_properties(OpenCV::Features2d PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES "${OPENCV_INCLUDE_DIR}"
+      IMPORTED_LOCATION "${OPENCV_LIBRARY_DIR}/opencv_features2d2413.lib")
+
+    add_library(OpenCV::Flann MODULE IMPORTED)
+    set_target_properties(OpenCV::Flann PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES "${OPENCV_INCLUDE_DIR}"
+      IMPORTED_LOCATION "${OPENCV_LIBRARY_DIR}/opencv_flann2413.lib")
+
+    add_library(OpenCV::ML MODULE IMPORTED)
+    set_target_properties(OpenCV::ML PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES "${OPENCV_INCLUDE_DIR}"
+      IMPORTED_LOCATION "${OPENCV_LIBRARY_DIR}/opencv_ml2413.lib")
   endif()
 
 endif()
