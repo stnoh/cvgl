@@ -156,6 +156,9 @@ add_subdirectory(examples/example103)
 
 if(RSSDK_FOUND)
   add_subdirectory(examples/example201)
+  if(ARUCO_FOUND)
+	add_subdirectory(examples/example301)
+  endif()
 endif()
 
 if(KINECT2_FOUND)
