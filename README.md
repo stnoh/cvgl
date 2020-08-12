@@ -11,8 +11,8 @@ Any suggestion or push request are welcomed.
 These are included in this repository as git submodule.
 
 - [GLM](https://glm.g-truc.net): 0.9.8  
-- [pugiXML](https://github.com/zeux/pugixml/): v1.9 (optional)  
-- [dirent](https://github.com/tronkko/dirent): commit c885633 (2019-02-26, latest) (optional)
+- [pugiXML](https://github.com/zeux/pugixml/): v1.10 (optional)  
+- [dirent](https://github.com/tronkko/dirent): commit 2ff9816 (2020-06-29, latest) (optional)
 
 ### [3rdParty](https://github.com/stnoh/3rdParty): mandatory prebuilt binaries
 
@@ -23,6 +23,7 @@ From this choice, this repository cannot support various OS environment.
 - GLEW: 2.1.0
 - OpenCV: 2.4.13.6
 - AntTweakBar: 1.16b
+- ArUco: 3.0.6
 
 ### optional: prebuilt binaries
 
