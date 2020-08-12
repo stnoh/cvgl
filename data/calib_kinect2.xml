@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<opencv_storage>
+<!-- from manual input -->
+<depth_camera_focal>365.</depth_camera_focal>
+<color_camera_focal>1060.49</color_camera_focal>
+<depth_clipping_near>500</depth_clipping_near>
+<depth_clipping_far>8000</depth_clipping_far>
+<!-- from intrinsic calibration for depth -->
+<depth_image_size>
+  512 424</depth_image_size>
+<depth_camera_matrix type_id="opencv-matrix">
+  <rows>3</rows>
+  <cols>3</cols>
+  <dt>d</dt>
+  <data>
+    3.4037175007756485e+02 0. 2.5067270780250715e+02 0.
+    3.3821550817851909e+02 2.0310553445463256e+02 0. 0. 1.</data></depth_camera_matrix>
+<depth_dist_coeffs type_id="opencv-matrix">
+  <rows>5</rows>
+  <cols>1</cols>
+  <dt>d</dt>
+  <data>
+    7.1115356766038168e-02 -1.4102973639148278e-01
+    -9.6903864159211264e-04 4.7590463617597814e-04
+    3.4951708137944157e-03</data></depth_dist_coeffs>
+<!-- from intrinsic calibration for color -->
+<color_image_size>
+  1920 1080</color_image_size>
+<color_camera_matrix type_id="opencv-matrix">
+  <rows>3</rows>
+  <cols>3</cols>
+  <dt>d</dt>
+  <data>
+    1.0604944346420020e+03 0. 9.6120760571868720e+02 0.
+    1.0496553572602504e+03 4.9029013676673407e+02 0. 0. 1.</data></color_camera_matrix>
+<color_dist_coeffs type_id="opencv-matrix">
+  <rows>5</rows>
+  <cols>1</cols>
+  <dt>d</dt>
+  <data>
+    3.6122710683640064e-02 -4.2797564758026076e-02
+    -7.6119837536266048e-04 5.1388548748633996e-03
+    5.9399192800823584e-03</data></color_dist_coeffs>
+<!-- from extrinsic calibration -->
+<depth_to_color_rmat type_id="opencv-matrix">
+  <rows>3</rows>
+  <cols>3</cols>
+  <dt>d</dt>
+  <data>
+    +0.999988 -0.000200 +0.005000
+    +0.000350 +0.999550 -0.029995
+    -0.004992 +0.029997 +0.999538</data></depth_to_color_rmat>
+<depth_to_color_tvec>
+  +0.049974 +0.000167 -0.005247 </depth_to_color_tvec>
+<calibration_error>4.3090017942628661e-01</calibration_error>
+</opencv_storage>
