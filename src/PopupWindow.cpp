@@ -85,7 +85,7 @@ std::string wstr2str(const std::wstring wstr)
 ///////////////////////////////////////////////////////////////////////////////
 // open/save using native file dialog window
 ///////////////////////////////////////////////////////////////////////////////
-bool OpenFileWindow(std::string &filePath, const std::string filter)
+bool OpenFileWindow(std::string &filePath, const std::string filter, const std::string title)
 {
 	// add "All files (*.*)\0*" in the end of list
 	std::string filter_all(filter + "All files (*.*)\0*\0"s);
@@ -115,6 +115,8 @@ bool OpenFileWindow(std::string &filePath, const std::string filter)
 	ofn.lpstrInitialDir = NULL;
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
+	ofn.lpstrTitle = title.c_str(); // [ADDED] window title
+
 	// open file window
 	if (TRUE != GetOpenFileName(&ofn)) return false;
 
@@ -131,7 +133,7 @@ bool OpenFileWindow(std::string &filePath, const std::string filter)
 
 	return true;
 }
-bool SaveFileWindow(std::string &filePath, const std::string filter)
+bool SaveFileWindow(std::string &filePath, const std::string filter, const std::string title)
 {
 	// get the extensions from filter string ... ****************************** [TODO] find smarter way
 	std::vector<std::string> exts; exts.push_back(""); // empty string at 0-th
@@ -139,7 +141,7 @@ bool SaveFileWindow(std::string &filePath, const std::string filter)
 	auto GetFileExtension = [](const std::string& FileName)->std::string
 	{
 		if (FileName.find_last_of(".") != std::string::npos)
-			return FileName.substr(FileName.find_last_of(".") + 1);
+			return FileName.substr(FileName.find_last_of("."));
 		return "";
 	};
 
@@ -153,7 +155,7 @@ bool SaveFileWindow(std::string &filePath, const std::string filter)
 			if (flip % 2 == 0) {
 				buf.push_back('\0'); // ex) "*.txt(null)"
 				std::string ext = GetFileExtension(buf);
-				exts.push_back(ext); // convert to "txt"
+				exts.push_back(ext); // convert to ".txt"
 			}
 			buf.clear();
 		}
@@ -169,11 +171,11 @@ bool SaveFileWindow(std::string &filePath, const std::string filter)
 	// current datetime as default filename
 	#if UNICODE
 		static WCHAR szFile[4096];
-		swprintf_s(szFile, 4096, L"%s.%s", str2wstr(GetCurrentDateTime()).c_str(), str2wstr(exts[1]).c_str());
+		swprintf_s(szFile, 4096, L"%s%s", str2wstr(GetCurrentDateTime()).c_str(), str2wstr(exts[1]).c_str());
 		std::wstring _filter = str2wstr(filter);
 	#else
 		static char szFile[4096];
-		sprintf_s(szFile, "%s.%s", GetCurrentDateTime().c_str(), exts[1].c_str());
+		sprintf_s(szFile, "%s%s", GetCurrentDateTime().c_str(), exts[1].c_str());
 		std::string _filter = filter;
 	#endif
 
@@ -190,6 +192,8 @@ bool SaveFileWindow(std::string &filePath, const std::string filter)
 	ofn.lpstrInitialDir = NULL;
 	ofn.Flags = OFN_HIDEREADONLY | OFN_ENABLEHOOK | OFN_EXPLORER;
 
+	ofn.lpstrTitle = title.c_str(); // [ADDED] window title
+
 	// open file window
 	if (TRUE != GetSaveFileName(&ofn)) return false;
 
@@ -202,7 +206,7 @@ bool SaveFileWindow(std::string &filePath, const std::string filter)
 	// add extension if it is empty
 	if (0 == ofn.nFileExtension) {
 		std::string ext = exts[ofn.nFilterIndex];
-		if ("" != ext) filePath.append("." + ext);
+		if ("" != ext) filePath.append(ext);
 	}
 
 #elif

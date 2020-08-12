@@ -11,8 +11,8 @@ namespace cvgl {
 
 std::string GetCurrentDateTime();
 
-bool OpenFileWindow(std::string &filePath, const std::string filter = "All files (*.*)\0*\0"s);
-bool SaveFileWindow(std::string &filePath, const std::string filter = ""s);
+bool OpenFileWindow(std::string &filePath, const std::string filter = "All files (*.*)\0*\0"s, const std::string title = "");
+bool SaveFileWindow(std::string &filePath, const std::string filter = ""s, const std::string title = ""s);
 
 bool OpenFolderWindow(std::string &folderPath);
 
