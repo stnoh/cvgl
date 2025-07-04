@@ -10,6 +10,9 @@ project ("cvgl")
 ########################################
 find_package(OpenGL REQUIRED)
 
+add_subdirectory(${CMAKE_SOURCE_DIR}/external/glew-cmake)
+
+
 ###############################################################################
 # Main library (cvgl)
 ###############################################################################
@@ -34,11 +37,13 @@ add_library(cvgl STATIC ${headers} ${sources})
 target_include_directories(cvgl PUBLIC
   ${CMAKE_SOURCE_DIR}/external/glm
   ${CMAKE_SOURCE_DIR}/external/RGFW
+  ${CMAKE_SOURCE_DIR}/external/glew-cmake/include
 )
 
 ## link *.lib
 target_link_libraries(cvgl
   OpenGL::GLU
+  libglew_static
 )
 
 ##############################################################################
