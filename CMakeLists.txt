@@ -50,3 +50,4 @@ target_link_libraries(cvgl
 # Sub-directories: add new project as subdirectory
 ##############################################################################
 add_subdirectory(apps/app111)
+add_subdirectory(apps/app511)
